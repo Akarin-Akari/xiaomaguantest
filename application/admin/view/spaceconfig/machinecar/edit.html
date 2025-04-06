@@ -1,0 +1,278 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <!-- {if !in_array($_SESSION['think']['admin']['group_type'],[34,41,42,43])}
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <select  id="c-space_id" class="form-control selectpicker" name="row[space_id]">
+                    {foreach name="spaceList" item="vo"}
+                        <option value="{$vo.space_id}" {in name="vo.space_id" value="$row.space_id"}selected{/in}>{$vo.space_name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+    {/if} -->
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Machine_code')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-machine_code" data-rule="required" class="form-control" name="row[machine_code]" type="text" value="{$row.machine_code|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('FchrMachineDeviceID')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-fchrMachineDeviceID"   class="form-control" name="row[fchrMachineDeviceID]" type="text" value="{$row.fchrMachineDeviceID|htmlentities}">
+        </div>
+    </div>
+
+<!-- 
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Car_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-car_type" class="form-control selectpicker" name="row[car_type][]">
+                {foreach name="carTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.car_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Sim')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-sim" class="form-control" name="row[sim]" type="text" value="{$row.sim|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Sn')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-sn" class="form-control" name="row[sn]" type="text" value="{$row.sn|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Activate_id')}:</label>
+        <div class="col-xs-12 col-sm-6">
+            <input id="c-activate_id" class="form-control" name="row[activate_id]" type="text" value="{$row.activate_id|htmlentities}">
+        </div>
+        <div class="col-xs-12 col-sm-2">
+           <div class="btn btn-success" onclick="activate()">生成激活码</div>
+        </div>
+    </div>
+
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Terminal_equipment')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-terminal_equipment" class="form-control" name="row[terminal_equipment]" type="text" value="{$row.terminal_equipment|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Study_machine')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-study_machine" class="form-control" name="row[study_machine]" type="text" value="{$row.study_machine|htmlentities}">
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Address')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-address" class="form-control" name="row[address]" type="text" value="{$row.address|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Lng')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-lng" class="form-control" name="row[lng]" type="text" value="{$row.lng|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Lat')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-lat" class="form-control" name="row[lat]" type="text" value="{$row.lat|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Collor')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-collor" class="form-control selectpicker" name="row[collor]">
+                <option value="" >没有选中任何项</option>
+                {foreach name="collorList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.collor"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Remark')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-remark" class="form-control" name="row[remark]" type="text" value="{$row.remark|htmlentities}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('State')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="modeList" item="vo"}
+            <label for="row[mode]-{$key}"><input id="row[mode]-{$key}" name="row[mode]" type="radio" value="{$key}" {in name="key" value="$row.mode"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('State')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="stateList" item="vo"}
+            <label for="row[state]-{$key}"><input id="row[state]-{$key}" name="row[state]" type="radio" value="{$key}" {in name="key" value="$row.state"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel panel-danger">
+        
+        <!-- 模块，缴费信息 -->
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapseOne">
+                    记录 </a>
+            </h4>
+        </div>
+        
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Insurance_Start_Time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-insurance_start_time" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" onblur="set_time()" name="row[insurance_start_time]" type="text" value="{:$row.insurance_start_time?datetime($row.insurance_start_time):''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Insurance_End_Time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-insurance_end_time" class="form-control datetimepicker" data-date-format="YYYY-MM-DD" data-use-current="true" name="row[insurance_end_time]" type="text" value="{:$row.insurance_end_time?datetime($row.insurance_end_time):''}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('insurance_remark')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-insurance_remark" class="form-control" name="row[insurance_remark]" type="text" value="">
+        </div>
+    </div>
+        <div class="form-group">
+            <div class="col-xs-12 col-sm-12" >
+                <div class="col-xs-3 col-md-3" style="margin-top:7px;padding-left: 40px;">
+                    保险起始日期:
+                </div>
+                <div class="col-xs-3 col-md-3" style="margin-top:7px;padding-left: 40px;">
+                    保险结束日期:
+                </div>
+                <div class="col-xs-3 col-md-3" style="margin-top:7px;padding-left: 40px;">
+                    保险备注:
+                </div>
+            </div>
+        </div>
+
+            {foreach name="insuranceList" item="vo"}
+            <div class="row" id="interval">
+                <div class="form-group">
+                    <div class="col-xs-12 col-sm-12">
+                        <div class="col-xs-3 col-md-3">
+                            <input id="c-insurance_start_time_list" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[insurance_start_time_list][]" type="text" value="{:$vo.insurance_start_time?datetime($vo.insurance_start_time):''}" disabled>
+                        </div>
+                        <div class="col-xs-3 col-md-3">
+                            <input id="c-insurance_end_time_list" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[insurance_end_time_list][]" type="text" value="{:$vo.insurance_end_time?datetime($vo.insurance_end_time):''}" disabled>
+                        </div>
+                        <div class="col-xs-3 col-md-3">
+                            <input id="c-insurance_remark" class="form-control" name="row[insurance_remark]" type="text" value="{$vo.remark|htmlentities}" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/foreach}
+<!-- 
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2"></label>
+            <div class="col-xs-12 col-sm-4">
+                <button type="button" class="btn btn-primary btn-sm" onclick="add_interval()">添加</button>
+                <button id="del_button" type="button" class="btn btn-danger btn-sm" onclick="del_interval()"
+                    style="display:none">删除</button>
+            </div>
+        </div> -->
+    </div>
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    function activate (){
+        var tmp = Date.parse( new Date() ).toString();
+        tmp = tmp.substr(0,10);
+
+        var machine_code = document.getElementById('c-machine_code').value;
+        var sn = document.getElementById('c-sn').value;
+        if(!machine_code || !sn ){
+            alert('当前填入的机器码或者SN码为空');
+            return
+        }
+
+        var formData = new FormData();
+        formData.append('machine_code',machine_code);
+        formData.append('sn',sn);
+        $.ajax({
+            url: "/admin/spaceconfig/machinecar/toMd5",//这是方法地址
+            type: "POST",
+            data: formData,
+            /**
+            *必须false才会自动加上正确的Content-Type
+            */
+            contentType: false,
+            /**
+            * 必须false才会避开jQuery对 formdata 的默认处理
+            * XMLHttpRequest会对 formdata 进行正确的处理
+            */
+            processData: false,
+            success: function (data) {
+                console.log(data)
+                if(data['code'] == 1){
+                    document.getElementById('c-activate_id').value = data['msg'];
+                }
+            },
+            error: function (data) {
+                alert("读取异常上传失败（请关闭页面，重新选择添加）");
+
+            }
+        });
+    }
+
+    function set_time(){
+        start_time = document.getElementById('c-insurance_start_time').value;
+        let date = new Date(start_time);
+
+        let month = date.getMonth()+1;
+        if(month <10){
+            month = '0'+month;
+        }
+        let day = date.getDate();
+        if(day <10){
+            day = '0'+day;
+        }
+        let end_time = (date.getFullYear()+1) + '-'+month +'-'+day
+        $('#c-insurance_end_time').val(end_time);
+    }
+</script>

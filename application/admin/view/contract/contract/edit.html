@@ -1,0 +1,53 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-name" data-rule="required"  class="form-control" name="row[name]" type="text" value="{$row.name|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Course_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-course_id" class="form-control selectpicker"  multiple="" required name="row[course_id][]">
+                <option value="">没有选中任何项</option>
+                {foreach name="courseList" item="vo"}
+                    <!-- <option value="{$vo.id}" {in name="vo.id" value=""}selected{/in}>{$vo.course}--{$vo.money}</option> -->
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.course_id"}selected{/in}>{$vo.course}--{$vo.money}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('File_path')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-file_path" class="form-control" name="row[file_path]" type="text" value="{$row.file_path|htmlentities}" disabled>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Validitytime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-validitytime" data-rule="required" class="form-control"  data-use-current="true" name="row[validitytime]" type="text" value="{$row.validitytime|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('State')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-state" class="form-control selectpicker" name="row[state]">
+                {foreach name="StateList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.state"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

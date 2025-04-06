@@ -1,0 +1,306 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <select  id="c-space_type" class="form-control selectpicker" name="row[space_type]" data-rule="required">
+                {foreach name="spaceTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.space_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Fj_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-fj_id" class="form-control" name="row[fj_id]" type="text" value="{$row.fj_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-space_name" class="form-control" name="row[space_name]" type="text" value="{$row.space_name|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Curator_name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-curator_name" class="form-control" name="row[curator_name]" type="text" value="{$row.curator_name|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_phone')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-space_phone" class="form-control" name="row[space_phone]" type="text" value="{$row.space_phone|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Subject_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-subject_type" class="form-control selectpicker" multiple="" name="row[subject_type][]" data-rule="required">
+                {foreach name="subjectTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.subject_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Car_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <select  id="c-car_type" class="form-control selectpicker" multiple="" name="row[car_type][]" data-rule="required">
+                {foreach name="carTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.car_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Starttimes')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-starttimes" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[starttimes]" type="text" value="{$row.starttimes}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Endtimes')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-endtimes" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[endtimes]" type="text" value="{$row.endtimes}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Day')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-day" class="form-control" name="row[day]" type="number" value="{$row.day|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Advance_cancel_times')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-advance_cancel_times" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[advance_cancel_times]" type="text" value="{$row.advance_cancel_times}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Order_length')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-order_length" class="form-control" name="row[order_length]" type="number" value="{$row.order_length|htmlentities}">
+        </div>
+    </div>
+    
+    {if $_SESSION['think']['admin']['group_type']== '11'}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Allow_Space')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-allow_space" class="form-control selectpicker" multiple="" name="row[allow_space][]">
+                {foreach name="spaceList" item="vo"}
+                    <option value="{$vo.space_id}" {in name="vo.space_id" value="$row.allow_space"}selected{/in}>{$vo.space_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if}
+
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Times_limit_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="timesLimitStatusList" item="vo"}
+            <label for="row[times_limit_status]-{$key}"><input id="row[times_limit_status]-{$key}" name="row[times_limit_status]" type="radio" value="{$key}" {in name="key" value="$row.times_limit_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Times_limit')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-times_limit" class="form-control" name="row[times_limit]" type="number" value="{$row.times_limit|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Times_limit_cooperation_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="timesLimitCooperationStatusList" item="vo"}
+            <label for="row[times_limit_cooperation_status]-{$key}"><input id="row[times_limit_cooperation_status]-{$key}" name="row[times_limit_cooperation_status]" type="radio" value="{$key}" {in name="key" value="$row.times_limit_cooperation_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Times_limit_cooperation')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-times_limit_cooperation" data-rule="required" class="form-control" name="row[times_limit_cooperation]" type="number" value="{$row.times_limit_cooperation|htmlentities}">
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('City')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class='control-relative'><input id="c-city" class="form-control" data-toggle="city-picker" name="row[city]" type="text" value="{$row.city|htmlentities}" ></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2" for=""></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="button" class="btn btn-primary" data-toggle='addresspicker' data-input-id="c-address" data-lng-id="c-lng" data-lat-id="c-lat">点击选择地址获取经纬度</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Address')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-address" class="form-control" name="row[address]" type="text" value="{$row.address|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Lng')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-lng" class="form-control" step="0.00001" name="row[lng]" type="number" value="{$row.lng|htmlentities}" data-rule="required">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Lat')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-lat" class="form-control" step="0.00001" name="row[lat]" type="number" value="{$row.lat|htmlentities}" data-rule="required">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Region_info')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-region_info" class="form-control" name="row[region_info]" type="text" value="{$row.region_info|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Area')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-area" class="form-control" step="0.01" name="row[area]" type="number" value="{$row.area|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Regionimage')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-regionimage" class="form-control" size="50" name="row[regionimage]" type="text" value="{$row.regionimage|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-regionimage" class="btn btn-danger faupload" data-input-id="c-regionimage" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-regionimage"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <!-- <span><button type="button" id="fachoose-regionimage" class="btn btn-primary fachoose" data-input-id="c-regionimage" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span> -->
+                </div>
+                <span class="msg-box n-right" for="c-regionimage"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-regionimage"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Images')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-images" class="form-control" size="50" name="row[images]" type="text" value="{$row.images|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-images" class="btn btn-danger faupload" data-input-id="c-images" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="true" data-preview-id="p-images"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <!-- <span><button type="button" id="fachoose-images" class="btn btn-primary fachoose" data-input-id="c-images" data-mimetype="image/*" data-multiple="true"><i class="fa fa-list"></i> {:__('Choose')}</button></span> -->
+                </div>
+                <span class="msg-box n-right" for="c-images"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-images"></ul>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Logo_image')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-logo_image" class="form-control" size="50" name="row[logo_image]" type="text" value="{$row.logo_image|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-logo_image" class="btn btn-danger faupload" data-input-id="c-logo_image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="true" data-preview-id="p-logo_image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-logo_image"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-logo_image"></ul>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Info_msg')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-info_msg" class="form-control" data-toggle="info_msg-picker" name="row[info_msg]" type="text" value="{$row.info_msg|htmlentities}" >
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pick_up_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="PickUpStatusList" item="vo"}
+            <label for="row[pick_up_status]-{$key}"><input id="row[pick_up_status]-{$key}" name="row[pick_up_status]" type="radio" value="{$key}" {in name="key" value="$row.pick_up_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pick_up_maxmile')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-pick_up_maxmile" class="form-control" step="0.1" name="row[pick_up_maxmile]" type="number" value="{$row.pick_up_maxmile|htmlentities}">
+        </div>
+    </div>
+
+    {if in_array($_SESSION['think']['admin']['group_type'],[11])}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pay_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="PayStatusList" item="vo"}
+            <label for="row[pay_status]-{$key}"><input id="row[pay_status]-{$key}" name="row[pay_status]" type="radio" value="{$key}" {in name="key" value="$row.pay_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+        </div>
+    </div>
+    {/if}
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pass_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="PassStatusList" item="vo"}
+            <label for="row[pass_status]-{$key}"><input id="row[pass_status]-{$key}" name="row[pass_status]" type="radio" value="{$key}" {in name="key" value="$row.pass_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_state')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="spaceStateList" item="vo"}
+            <label for="row[space_state]-{$key}"><input id="row[space_state]-{$key}" name="row[space_state]" type="radio" value="{$key}" {in name="key" value="$row.space_state"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

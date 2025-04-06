@@ -1,0 +1,141 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    {if !in_array($_SESSION['think']['admin']['group_type'],[34,41,42,43])}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cooperation_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-cooperation_id" class="form-control selectpicker" name="row[cooperation_id]">
+                {foreach name="cooperationList" item="vo"}
+                    <option value="{$vo.cooperation_id}" {in name="vo.cooperation_id" value=""}selected{/in}>{$vo.cooperation_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Course')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-course" data-rule="required" class="form-control" name="row[course]" type="text" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Money')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-money"  data-rule="required" class="form-control" step="0" name="row[money]" type="number" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Price')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-price" class="form-control" step="0" name="row[price]" type="number" value="">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Car_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="radio">
+                <label for="row[car_type]-1"><input id="row[car_type]-1" name="row[car_type]" type="radio" value="1" checked="" >小车</label> 
+                <label for="row[car_type]-2"><input id="row[car_type]-2" name="row[car_type]" type="radio" value="2" >大车</label> 
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">是否支持分期</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="radio">
+                <label for="row[status]-yes"><input id="row[status]-yes" name="row[status]" type="radio" value="yes" checked="" onclick="onElement()">分期</label> 
+                <label for="row[status]-no"><input id="row[status]-no" name="row[status]" type="radio" value="no" onclick="removeElement()">不分期</label> 
+            </div>
+        </div>
+    </div>
+    
+    <div id="installment">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">第1期</label>
+            <div class="col-xs-12 col-sm-5">
+                <input id="c-money"  data-rule="required" class="form-control" step="0" name="row[installment][]" type="number" value="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">第2期</label>
+            <div class="col-xs-12 col-sm-5">
+                <input id="c-money"  data-rule="required" class="form-control form-installment" step="0" name="row[installment][]" type="number" value="">
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <div id="add_2" class="col-sm-2" style="width: 60px;">
+                    <div class="btn btn-success btn-embossed" onclick="add(2)">添加</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+
+</form>
+
+
+<script>
+    function removeElement(){
+        var number = $("#installment").children().length;
+        if(number){
+            $("#installment").empty();
+        }
+    }
+    function onElement(){
+        var number = $("#installment").children().length;
+        if(!number){
+            content = '<div class="form-group"><label class="control-label col-xs-12 col-sm-2">第1期</label><div class="col-xs-12 col-sm-5"><input id="c-money"  data-rule="required" class="form-control" step="0" name="row[installment][]" type="number" value=""></div></div>';
+            content += '<div class="form-group"><label class="control-label col-xs-12 col-sm-2">第2期</label><div class="col-xs-12 col-sm-5"><input id="c-money"  data-rule="required" class="form-control form-installment" step="0" name="row[installment][]" type="number" value=""></div><div class="col-xs-12 col-sm-3"><div id="add_2" style="width: 60px;"><div class="btn btn-success btn-embossed" onclick="add(2)">添加</div></div><div id="del_2"></div></div></div>';
+            $('#installment').append(content)
+        }
+    }
+
+    function add($id){
+        var number = $("#installment").children().length;
+        if(number<6){
+            $new_id = $id +1;
+            if(number ==5){
+                content = '<div class="form-group"><label class="control-label col-xs-12 col-sm-2">第'+$new_id+'期</label><div class="col-xs-12 col-sm-5"><input id="c-money"  data-rule="required" class="form-control form-installment" step="0" name="row[installment][]" type="number" value=""></div><div class="col-xs-12 col-sm-3"><div id="del_'+$new_id+'" class="col-sm-2" style="width: 60px;"><div class="btn btn-danger btn-embossed" onclick="del('+$new_id+')">删除</div></div></div></div>';
+            }else{
+                content = '<div class="form-group"><label class="control-label col-xs-12 col-sm-2">第'+$new_id+'期</label><div class="col-xs-12 col-sm-5"><input id="c-money"  data-rule="required" class="form-control form-installment" step="0" name="row[installment][]" type="number" value=""></div><div class="col-xs-12 col-sm-3"><div id="add_'+$new_id+'"class="col-sm-2" style="width: 60px;"><div class="btn btn-success btn-embossed" onclick="add('+$new_id+')">添加</div></div><div id="del_'+$new_id+'" class="col-sm-2" style="width: 60px;"><div class="btn btn-danger btn-embossed" onclick="del('+$new_id+')">删除</div></div></div></div>';
+            }
+            $add = 'add_'+$id;
+            $del = 'del_'+$id;
+            $("#"+$add).empty()
+            if(number>2){
+                $("#"+$del).empty();
+            }
+            $('#installment').append(content)
+
+        }
+    }
+
+    function del($id){
+        var number = $("#installment").children().length;
+
+        if(number >2){
+            $('#installment').children().eq(-1).remove()
+            if(number==3){
+                $add = 'add_'+($id-1);
+                $content = '<div class="btn btn-success btn-embossed" onclick="add('+($id-1)+')">添加</div>';
+                $("#"+$add).append($content)
+            }else{
+                $add = 'add_'+($id-1);
+                $content = '<div class="btn btn-success btn-embossed" onclick="add('+($id-1)+')">添加</div>';
+                $("#"+$add).append($content)
+                $del = 'del_'+($id-1);
+                $content2 = '<div class="btn btn-danger btn-embossed" onclick="del('+($id-1)+')">删除</div>';
+                $("#"+$del).append($content2)
+            }
+        }
+    }
+</script>

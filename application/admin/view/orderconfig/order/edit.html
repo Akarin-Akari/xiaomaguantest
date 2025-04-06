@@ -1,0 +1,156 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ordernumber')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-ordernumber" data-rule="required" class="form-control" name="row[ordernumber]" type="text" disabled value="{$row.ordernumber|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Student_name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-stu_name" data-rule="required" class="form-control" name="row[stu_name]" type="text" disabled value="{$row.student.name|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Coach_id')}:</label>
+        <div class="col-xs-12 col-sm-8">     
+            <select  id="c-coach_id" class="form-control selectpicker" name="row[coach_id]">
+                {foreach name="coachList" item="vo"}
+                    <option value="{$vo.coach_id}" {in name="vo.coach_id" value="$row.coach_id"}selected{/in}>{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Car_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-car_type" class="form-control selectpicker" name="row[car_type][]">
+                {foreach name="carTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.car_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Subject_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-subject_type" class="form-control selectpicker" name="row[subject_type][]">
+                {foreach name="subjectTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.subject_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Level')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-level" class="form-control" name="row[level]" type="text" value="{$row.level|htmlentities}" disabled>
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_starttime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-reserve_starttime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[reserve_starttime]" type="text" value="{:$row.reserve_starttime?datetime($row.reserve_starttime):''}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_endtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-reserve_endtime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[reserve_endtime]" type="text" value="{:$row.reserve_endtime?datetime($row.reserve_endtime):''}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Machine_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            {if $row.machine_id ==''}
+            <select  id="c-machine_id" class="form-control selectpicker" name="row[machine_id]">
+                <option   value="">当前没有选择</option>
+                {foreach name="machinelist" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.machine_id"}selected{/in}>{$vo.machine_code}</option>
+                {/foreach}
+            </select>
+            {else}
+            <select  id="c-machine_id" class="form-control selectpicker" name="row[machine_id]" disabled>
+                {foreach name="machinelist" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.machine_id"}selected{/in}>{$vo.machine_code}</option>
+                {/foreach}
+            </select>
+            {/if}
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Paymodel')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-payModel" data-rule="required" class="form-control selectpicker" name="row[payModel]" disabled >
+                {foreach name="paymodelList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.payModel"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Order_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            {if $row.order_status =='paid'}
+                <div class="radio">
+                    <label for="row[order_status]-paid"><input id="row[order_status]-paid" name="row[order_status]" type="radio" value="paid" checked=""> 已付待受理</label>
+                    <label for="row[order_status]-accept_unexecut"><input id="row[order_status]-accept_unexecut" name="row[order_status]" type="radio" value="accept_unexecut"> 已受理未执行</label> 
+                    <label for="row[order_status]-executing"><input id="row[order_status]-executing" name="row[order_status]" type="radio" value="executing"> 执行中</label>
+                    <label for="row[order_status]-finished"><input id="row[order_status]-finished" name="row[order_status]" type="radio" value="finished"> 已完成</label>
+                    <label for="row[order_status]-cancel_refunded"><input id="row[order_status]-cancel_refunded" name="row[order_status]" type="radio" value="cancel_refunded"> 取消</label> 
+                </div>
+            {elseif $row.order_status == 'cancel_refunded'}
+                <div class="radio">
+                    <label for="row[order_status]-cancel_refunded"><input id="row[order_status]-cancel_refunded" name="row[order_status]" type="radio" value="cancel_refunded" checked> 取消</label> 
+                </div>            
+            {else}
+                <div class="radio">
+                    {foreach name="orderStatusList" item="vo"}
+                    <label for="row[order_status]-{$key}"><input id="row[order_status]-{$key}" name="row[order_status]" type="radio" value="{$key}" {in name="key" value="$row.order_status"}checked{/in} /> {$vo}</label> 
+                    {/foreach}     
+                </div>
+            {/if}
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ordertype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-ordertype" class="form-control selectpicker" name="row[ordertype]">
+                {foreach name="ordertypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.ordertype"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Audittime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-auditTime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[auditTime]" type="text" value="{$row.auditTime}">
+        </div>
+    </div> -->
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Remarks')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-remarks" class="form-control" name="row[remarks]" type="text" value="{$row.remarks|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

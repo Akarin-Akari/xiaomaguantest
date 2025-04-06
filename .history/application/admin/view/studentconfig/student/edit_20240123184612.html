@@ -1,0 +1,555 @@
+<style>
+    .steps {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        width:100%;
+    }
+
+    /* 进度线宽，4份，25% */
+    .step {
+        width: 25%;
+        height: 20px;
+    }
+
+    /* 进度线和序号，使用弹性居中布局让序号和进度线居中 */
+    .step-progress {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* 文本居中 */
+    .step-text {
+        width: 100%;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    /* 进度线 */
+    .step-line {
+        width: 100%;
+        height: 9px;
+        margin-top: 7px;
+        background-color: #cccccc;
+    }
+</style>
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    
+    <div class="div-flex" style="margin-bottom:30px;">
+        <!-- 步骤进度条 -->
+        <div class="steps">
+            <!-- 第一部分 -->
+            <div class="step">
+                <div class="step-progress left  done ">
+                    <div class="step-line"></div>
+                    <span class="step-num">1</span>
+                </div>
+                <div class="step-text">
+                    <span>初期沟通</span>
+                </div>
+            </div>
+            <!-- 第二部分 -->
+            <div class="step">
+                <div class="step-progress  done ">
+                    <div class="step-line"></div>
+                    <span class="step-num">2</span>
+                </div>
+                <div class="step-text">
+                    <span>立项跟踪</span>
+                </div>
+            </div>
+            <!-- 第三部分 -->
+            <div class="step">
+                <div class="step-progress  done ">
+                    <div class="step-line"></div>
+                    <span class="step-num">3</span>
+                </div>
+                <div class="step-text">
+                    <span>方案/报价</span>
+                </div>
+            </div>
+            <!-- 第四部分 -->
+            <div class="step">
+                <div class="step-progress  done ">
+                    <div class="step-line"></div>
+                    <span class="step-num">4</span>
+                </div>
+                <div class="step-text">
+                    <span>谈判审核</span>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-progress right  done ">
+                    <div class="step-line"></div>
+                    <span class="step-num">5</span>
+                </div>
+                <div class="step-text">
+                    <span> 赢单 </span>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Photoimage')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-photoimage" class="form-control" size="50" name="row[photoimage]" type="text" value="{$row.photoimage|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-photoimage" class="btn btn-danger faupload" data-input-id="c-photoimage" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-photoimage"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-photoimage" class="btn btn-primary fachoose" data-input-id="c-photoimage" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-photoimage"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-photoimage"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-space_id" class="form-control selectpicker" name="row[space_id]">
+                {foreach name="spaceList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.space_id"}selected{/in}>{$vo.space_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <!-- {if $_SESSION['think']['admin']['id'] == 1 }
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pay_cooperation')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-pay_cooperation" class="form-control selectpicker" multiple="" name="row[pay_cooperation][]">
+                {foreach name="cooperationList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.pay_cooperation"}selected{/in}>{$vo.nickname}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if} -->
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('FchrSNCode')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-fchrSNCode" class="form-control" name="row[fchrSNCode]" type="text" value="{$row.fchrSNCode|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-name" data-rule="required"  class="form-control" name="row[name]" type="text" value="{$row.name|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Phone')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-phone" data-rule="required" class="form-control" name="row[phone]" type="text" value="{$row.phone|htmlentities}">
+        </div>
+    </div>
+
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Idcard')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-idcard"  class="form-control" name="row[idcard]" type="text" value="{$row.idcard|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Sex')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-sex" class="form-control selectpicker" name="row[sex]">
+                {foreach name="sexList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.sex"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+   
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Vx_name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-vx_name" class="form-control" name="row[vx_name]" type="text" value="{$row.vx_name|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Email')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-email" class="form-control" name="row[email]" type="text" value="{$row.email|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Nation')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-nation" data-rule="required"  class="form-control" name="row[nation]" type="text" value="{$row.nation|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Car_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-car_type" data-rule="required"  class="form-control selectpicker" name="row[car_type]" >
+                {foreach name="carTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.car_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Registtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-registtime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[registtime]" type="text" value="{:$row.registtime?datetime($row.registtime):''}" disabled>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Introducer')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-introducer"  class="form-control" name="row[introducer]" type="text" value="{$row.introducer|htmlentities}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_study_sign')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-keer_study_sign" class="form-control selectpicker"  multiple="" name="row[keer_study_sign][]">
+                <option value="">没有选中任何项</option>
+                {foreach name="KeerStudySignList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.keer_study_sign"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_study_sign')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-kesan_study_sign" class="form-control selectpicker"  multiple="" name="row[kesan_study_sign][]">
+                <option value="">没有选中任何项</option>
+                {foreach name="KesanStudySignList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.kesan_study_sign"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div> -->
+
+    {if in_array($_SESSION['think']['admin']['group_type'],[11,21,23,24,31,33,35])}
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Subject_type')}:</label>
+        <div class="col-xs-12 col-sm-8">   
+            <select  id="c-subject_type" class="form-control selectpicker" multiple="" name="row[subject_type][]">
+                <option value="">没有选中任何项</option>
+                {foreach name="subjectTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.subject_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    {/if}
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Sign_up_source')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-sign_up_source"   class="form-control selectpicker"  name="row[sign_up_source]">
+                <option value="">没有选中任何项</option>
+                {foreach name="signupsourceList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.sign_up_source"}selected{/in}>{$vo.sign_up_source_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Coach_sc_keer')}:</label>
+        <div class="col-xs-12 col-sm-8">   
+            <select  id="c-coach_sc_keer"   class="form-control selectpicker"  name="row[coach_sc_keer]">
+                <option value="">没有选中任何项</option>
+                {foreach name="coach_sc_keer" item="vo"}
+                    <option value="{$vo.coach_id}" {in name="vo.coach_id" value="$row.coach_sc_keer"}selected{/in}>{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Coach_sc_kesan')}:</label>
+        <div class="col-xs-12 col-sm-8">   
+            <select  id="c-coach_sc_kesan"   class="form-control selectpicker"  name="row[coach_sc_kesan]">
+                <option value="">没有选中任何项</option>
+                {foreach name="coach_sc_kesan" item="vo"}
+                    <option value="{$vo.coach_id}" {in name="vo.coach_id" value="$row.coach_sc_kesan"}selected{/in}>{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Recommender')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            {foreach name="recommenderList" item="vo"}
+                {if $vo.id == $row.follower}
+                    <input id="c-recommender"  class="form-control" step="0" name="recommender" type="text" value="{$vo.name}" disabled>
+                {/if}
+            {/foreach}
+        </div>
+    </div> -->
+
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Follower')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-follower" class="form-control selectpicker" name="row[follower]">
+                <option value="">没有选中任何项</option>
+                {foreach name="recommenderList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.follower"}selected{/in}>{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div> -->
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Address')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class='control-relative'><input id="c-address" class="form-control" data-toggle="city-picker" name="row[address]"  type="text"  value="{$row.address|htmlentities}"></div>
+        </div>
+    </div>
+
+   
+    
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Idcard1image')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-idcard1image" class="form-control" size="50" name="row[idcard1image]" type="text" value="{$row.idcard1image|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-idcard1image" class="btn btn-danger faupload" data-input-id="c-idcard1image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-idcard1image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-idcard1image" class="btn btn-primary fachoose" data-input-id="c-idcard1image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-idcard1image"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-idcard1image"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Idcard2image')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-idcard2image" class="form-control" size="50" name="row[idcard2image]" type="text" value="{$row.idcard2image|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-idcard2image" class="btn btn-danger faupload" data-input-id="c-idcard2image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-idcard2image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-idcard2image" class="btn btn-primary fachoose" data-input-id="c-idcard2image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-idcard2image"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-idcard2image"></ul>
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Contract_path')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                {if $row.contract_path}
+                    <input id="c-contract_path" class="form-control" size="50" name="row[contract_path]" type="text" value="{$row.contract_path|htmlentities}">
+                    <div class="input-group-addon no-border ">
+                        <a href="{$row.contract_path}" target="blank" aria-disabled="true">查看合同</a>
+                    </div>
+                {/if}
+                {if !$row.contract_path}
+                <input id="c-contract_path" class="form-control" size="50" name="row[contract_path]" type="text" value="{$row.contract_path|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-contract_path" class="btn btn-danger faupload" data-input-id="c-contract_path" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-contract_path"><i class="fa fa-upload"></i>上传纸质合同</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-contract_path"></span>
+                {/if}
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-contract_path"></ul>
+        </div>
+    </div>
+
+    <!-- {if $_SESSION['think']['admin']['id'] == 2 }
+        {if !$row.contract_path}
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('选择合同模板')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <select  id="c-contract" class="form-control selectpicker" onchange="selectcontract('{$row.stu_id}')"  name="row[contract]">
+                    <option value="">没有选中任何项</option>
+                    {foreach name="contractList" item="vo"}
+                        <option value="{$vo.id}" {in name="vo.id" value=""}selected{/in}>{$vo.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        {/if}
+
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('合同地址')}:</label>
+            <div class="col-xs-12 col-sm-8">
+
+                <div class="input-group">
+                   {if $row.contract_path}
+                    <input id="c-contract_path" class="form-control" size="50" name="row[contract_path]" type="text" value="{$row.contract_path|htmlentities}">
+                    <div class="input-group-addon no-border ">
+                        <a href="{$row.contract_path}" target="blank" aria-disabled="true">查看合同地址</a>
+                    </div>
+                   {/if}
+
+                   {if !$row.contract_path}
+                   <input id="c-contract_path" class="form-control" size="50" name="row[contract_path]" type="text" value="">
+                   <div class="input-group-addon no-border ">
+                       <a href="" target="blank" id="contract_path" aria-disabled="true"></a>
+                   </div>
+                    {/if}
+                   
+                </div>
+
+            </div>
+        </div> 
+
+    {/if} -->
+
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Course')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-course_id" class="form-control selectpicker"  name="row[course_id]" >
+                <option value="">没有选中任何项</option>
+                {foreach name="courseList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value="$row.course_id"}selected{/in}>{$vo.course}--{$vo.money}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Payment_process')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-payment_process" data-rule="required" class="form-control selectpicker" name="row[payment_process]" disabled>
+                {foreach name="paymentprocessList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.payment_process"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div> -->
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">缴费记录</label>
+        <div class="col-xs-12 col-sm-2" >
+            <label class="control-label"  >金额:</label>
+        </div>
+        <div class="col-xs-12 col-sm-2">
+            <label class="control-label" >支付方式:</label>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            <label class="control-label" >流水号:</label>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            <label class="control-label" >缴费时间:</label>
+        </div>
+    </div>
+    <div id="interval">
+    {foreach name="installment" item="vo"}
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2"></label>
+            <div class="col-xs-12 col-sm-2">
+                <input id="c-money"  class="form-control" step="0" name="row[money][]" type="text" value="{$vo.money}" disabled>
+            </div>
+            <div class="col-xs-12 col-sm-2">
+                {foreach name="paymentSourceList" item="vvo"}
+                    {if $vvo.id == $vo.payment_source}
+                    <input id="c-payment_source"  class="form-control" step="0" name="row[payment_source][]" type="text" value="{$vvo.payment_source}" disabled>
+                    {/if}
+                {/foreach}
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <input id="c-payment_number"  class="form-control" step="0" name="row[payment_number][]" type="text" value="{$vo.payment_number}" disabled>
+            </div>
+            <div class="col-xs-12 col-sm-3">
+                <input id="c-pay_time"  class="form-control" step="0" name="row[pay_time][]" type="text" value="{$vo.pay_time_text}" disabled>
+            </div>
+        </div>
+    {/foreach}
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-4">
+            <button type="button" class="btn btn-primary btn-sm" onclick="add_interval()" >添加</button>
+            <button id="del_button" type="button" class="btn btn-danger btn-sm" onclick="del_interval()" style="display:none" >删除</button>
+        </div>
+    </div>
+
+    
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.getElementById("c-contract_path").innerText = '123'
+    var i = 0;
+    var length = {$length};
+    function add_interval(){
+        i +=1;
+        var content = '<div class="form-group"><label class="control-label col-xs-12 col-sm-2"></label><div class="col-xs-12 col-sm-2"><input id="money" class="form-control" name="row[money][]" type="number" value=""></div>'
+        content += '<div class="col-xs-12 col-sm-2"><select  id="payment_source" class="form-control" name="row[payment_source][]"><option value="" >没有选中任何项</option>{foreach name="paymentSourceList" item="vo"}<option value="{$vo.id}" {in name="vo.id" value=""}selected{/in}>{$vo.payment_source}</option>{/foreach}</select></div>'
+        content += '<div class="col-xs-12 col-sm-3"><input id="payment_number" class="form-control"  name="row[payment_number][]" type="text" value=""></div></div></div>'
+        $("#del_button").show()
+        $('#interval').append(content)
+    }
+
+
+    function del_interval(i){
+        var number = $("#interval").children().length;
+        if(number >length+1){
+            $('#interval').children().eq(-1).remove()
+        }else if(number == (length+1)){
+            $('#interval').children().eq(-1).remove()
+            $("#del_button").hide()
+        }
+        
+    }
+    
+    function selectcontract(stu_id){
+        let contract_id = $('#c-contract').val()
+        if(contract_id){
+            $.ajax({
+                type:"post",
+                dataType:"json",
+                data:{'stu_id':stu_id,'contract_id':contract_id},//把cateid传递到Controller里的方法中去
+                url:"studentconfig/student/create_contract",//这是方法地址
+                success:function (data,ret){
+                    if(data.code == 1 ){
+                        document.getElementById("c-contract_path").value = data.url;
+                        document.getElementById("contract_path").href = 'https://admin.aivipdriver.com/'+data.url;
+                        document.getElementById("contract_path").innerText = '查看合同详情';
+                    }else{
+                        console.log(data)
+                    }
+                }
+            });
+        }else{
+            document.getElementById("contract_path").href = '';
+            document.getElementById("contract_path").innerText = '';
+        }
+        
+    }
+
+
+</script>

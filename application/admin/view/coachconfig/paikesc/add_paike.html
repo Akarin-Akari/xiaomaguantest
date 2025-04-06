@@ -1,0 +1,81 @@
+
+
+<!-- <form id="add-form"> -->
+<!-- <form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action=""> -->
+
+    <div  class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('Phone')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <input id="c-phone"  class="form-control" name="phone" type="text">
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('Coach_id')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <select  id="c-coach_id" class="form-control selectpicker" data-rule="required" name="coach_id" readonly>
+                    <!-- <input id="c-coach_id"  class="form-control" name="coach_id" type="text" disabled> -->
+                    <option value="{$row.coach_id}" selected{/in} >{$row.coach_name}</option>
+                </select>
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_starttime')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <input id="c-reserve_starttime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="reserve_starttime" type="text" value="{:$row.reserve_starttime?datetime($row.reserve_starttime):''}" readonly>
+            </div>
+        </div>
+    
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_endtime')}:</label>
+            <div class="col-xs-12 col-sm-8">
+                <input id="c-reserve_endtime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="reserve_endtime" type="text" value="{:$row.reserve_endtime?datetime($row.reserve_endtime):''}" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-12 col-sm-2"></label>
+            <div class="col-xs-12 col-sm-8">
+                <button type="submit" onclick="submit()" class="btn btn-success" readonly>{:__('OK')}</button>
+            </div>
+        </div>
+    </div>
+    <!-- </form> -->
+    
+    <script>
+        // function submit(){
+        //     Fast.api.close();//这里是重点
+        // }
+        function submit(){
+            phone = document.getElementById('c-phone').value
+            coach_id = document.getElementById('c-coach_id').value
+            reserve_starttime = document.getElementById('c-reserve_starttime').value
+            reserve_endtime = document.getElementById('c-reserve_endtime').value
+            if(!phone){
+                alert('请添加手机号');
+            }
+            // console.log(phone)
+            $.ajax({
+                type:"post",
+                dataType:"json",
+                data:{phone:phone,reserve_starttime:reserve_starttime,coach_id:coach_id,reserve_endtime:reserve_endtime},//把cateid传递到Controller里的方法中去
+                url:"coachconfig/paike/submit_paike",//这是方法地址
+                success:function (data,ret){
+                    if(data.code == 1 ){
+                        Layer.alert(data.msg);
+                        // sleep(3)
+                        // Fast.api.close();//这里是重点
+    
+                        // table.bootstrapTable('refresh');
+                    }else{
+                        console.log(data)
+                    }
+                    // document.getElementById("item").innerHTML = '';
+                    // content = '';
+                    // window.opener.location.reload();
+                }
+            });
+        }
+    
+    </script>

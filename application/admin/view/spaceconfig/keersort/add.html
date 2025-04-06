@@ -1,0 +1,158 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-space_id" class="form-control selectpicker" name="row[space_id]">
+                {foreach name="spaceList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value=""}selected{/in}>{$vo.space_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="title">
+        <div class="form-group lf">
+            <div class="control-label col-xs-12 col-sm-3">{:__('Process_name')}</div>
+            <div class="control-label col-xs-12 col-sm-3">{:__('Keer_c1_number')}</div>
+            <div class="control-label col-xs-12 col-sm-3">{:__('Keer_c1_number')}</div>
+        </div>
+    </div>
+    
+        <ul id="container">
+            {foreach name="process_name" item="vo"}
+                <li id="c-paixu" class="ele"draggable="true">
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-3">
+                            <input id="c-process_name" class="form-control" name="row[process_name][]" type="text" readonly value="{$vo}">
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <input id="c-keer_c1_number" class="form-control" name="row[keer_c1_number][]" type="text" value="{$row.keer_c1_number[$key]}">
+                        </div>
+                        <div class="col-xs-12 col-sm-3">
+                            <input id="c-keer_c2_number" class="form-control" name="row[keer_c2_number][]" type="text" value="{$row.keer_c2_number[$key]}">
+                        </div>
+                    </div>
+                </li>
+            {/foreach}
+        </ul>
+   
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+
+   
+</form>
+
+
+<style>
+    .lf{
+        padding-left:15px;
+        padding-right:15px;
+    }
+    .title{
+        padding-left: 40px;
+    }
+    .control-label{
+        text-align: center !important;
+    }
+    #c-sequence{
+        color: #fff;
+        background-color: #EA6E59;
+        border: 0;
+        padding: 0;
+    }
+    #c-process_name{
+        color: #fff;
+        background-color: #EA6E59;
+        text-align: center;
+        border: 0;
+        padding: 0;
+    }
+    #c-keer_c1_number{
+        color: #fff;
+        background-color: #EA6E59;
+        text-align: center;
+    }
+    #c-keer_c2_number{
+        color: #fff;
+        text-align: center;
+        background-color: #EA6E59;
+    }
+    .file {
+        width: 250px;
+        height: 50px;
+        position: absolute;
+        top: 50px;
+        left: 30%;
+        z-index: 1;
+        opacity: 0;
+    }
+    
+
+    ul {
+        list-style: none;
+        /* margin: 200px; */
+        font-size: 0;
+    }
+    .ele {
+        font-size: 16px;
+        /* width: 100%; */
+        /* width: 150px; */
+        height: 40px;
+        border: 1px solid #999;
+        background: #EA6E59;
+        margin: 2px 0;
+        border-radius: 10px;
+        padding-left: 10px;
+        color: white;
+        cursor: move;
+        text-align: left;
+    }
+</style>
+
+<script>
+var node = document.querySelector("#container");
+var draging = null;
+//使用事件委托，将li的事件委托给ul
+node.ondragstart = function(event) {
+        //console.log("start");
+              //firefox设置了setData后元素才能拖动！！！！
+        event.dataTransfer.setData("te", event.target.innerText); //不能使用text，firefox会打开新tab
+        //event.dataTransfer.setData("self", event.target);
+        draging = event.target;
+    }
+node.ondragover = function(event) {
+        //console.log("onDrop over");
+        event.preventDefault();
+        var target = event.target;
+              //因为dragover会发生在ul上，所以要判断是不是li
+        if (target.nodeName === "LI"&&target !== draging) {
+                if (_index(draging) < _index(target)) {
+                    target.parentNode.insertBefore(draging,target.nextSibling);
+                } else {
+                    target.parentNode.insertBefore(draging, target);
+                }
+        }
+    }
+    //获取元素在父元素中的index
+  function _index(el) {
+        var index = 0;
+
+        if (!el || !el.parentNode) {
+            return -1;
+        }
+
+        while (el && (el = el.previousElementSibling)) {
+            //console.log(el);
+            index++;
+        }
+
+        return index;
+    }
+</script>

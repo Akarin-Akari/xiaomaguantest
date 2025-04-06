@@ -1,0 +1,190 @@
+<style>
+    .form-horizontal .col-lg-3 {
+    width: 30%;
+  }
+  .radio .btn-default{
+    border-radius: 15px;
+    margin-top: 10px;
+  }
+  .radio{
+    margin-left: 10px;
+    margin-top: 0px;
+  }
+</style>
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+        <div class="panel panel-default panel-intro">
+            <div class="panel-body">
+                <div id="1" class="tab-content">
+                    <div class="tab-pane fade active in" id="one">
+                        <div class="widget-body no-padding">
+                            <div id="toolbar1" class="toolbar">
+                                {:build_toolbar('refresh')}
+                            </div>
+                            <table id="table" class="table table-striped table-bordered table-hover" width="100%">
+
+                            </table>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8">
+        <div class="panel panel-default panel-intro">
+            <div id="coach_name">当前教员：{$_SESSION['think']['coach_name']}</div>
+            <!-- <div class="form-group">
+                <label class="control-label col-xs-12 col-sm-2">{:__('Coach')}:</label>
+                <div class="col-xs-12 col-sm-8">
+                    {$kebiao.id}
+                </div>
+            </div> -->
+            <!-- <div class="col-xs-12 col-sm-8"> -->
+            <div class="radio">
+                {foreach name="getday" item="vo"}
+                <button  type="button" id="getday{$key}"  {if $key == $_SESSION['think']['day'] } style="background-color: #3498db;"{/if}  onclick="getday({$key})" class="btn btn-default">{$vo}</button>
+                {/foreach}
+            </div>
+
+            <!-- </div> -->
+
+            <div class="panel-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <tr>
+                        <th style="text-align: center; vertical-align: middle; " >
+                            <div class="th-inner ">时间段</div>
+                        </th>
+                        <th style="text-align: center; vertical-align: middle; ">
+                            <div class="th-inner ">分配模拟器数</div>
+                        </th>
+                        <th style="text-align: center; vertical-align: middle; " >
+                            <div class="th-inner ">手动已约</div>
+                        </th>
+                        <th style="text-align: center; vertical-align: middle; " >
+                            <div class="th-inner ">自动已约</div>
+                        </th>
+                        <th style="text-align: center; vertical-align: middle; " >
+                            <div class="th-inner ">当前时段状态</div>
+                        </th>
+                        <th style="text-align: center; vertical-align: middle; " >
+                            <div class="th-inner ">操作</div>
+                        </th>
+                    </tr>
+                    <tbody id="item">
+                        {foreach name="kebiao.time_list" item="vo"}
+                            <tr>
+                                <th style="text-align: center; vertical-align: middle;" >
+                                    <div class="th-inner">{$vo.starttimes}-{$vo.endtimes}</div>
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;">
+                                    <div class="th-inner">{$vo.number}</div>
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;">
+                                    <div class="th-inner">{$vo.cartype1}</div>
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;">
+                                    <div class="th-inner">{$vo.cartype2}</div>
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;">
+                                    <div class="th-inner" id="status{$key}">{$vo.status}</div>
+                                </th>
+                                <th style="text-align: center; vertical-align: middle;">
+                                    <div class="th-inner">
+                                        {if $vo.time_status == ''}
+                                            当前时间已过时
+                                        {else}
+                                        <button class="btn btn-success" id="time_status{$key}" onclick="operation({$kebiao.id},{$key})">{$vo.time_status}</button>
+                                            {if $vo.status == '开启中'}
+                                                <button class="btn btn-success add_paike"  data-url="coachconfig/paikesc/add_paike?id={$key}&coach_id={$kebiao.id}&day={$kebiao.day}" data-title="排课" >排课</button>
+                                            {/if}
+                                        {/if}
+                                    </div>
+                                </th>
+                            </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // let arr1 = "<%=session.getAttribute("day")%>";
+    let day = 0;
+    // document.getElementById('getday0').style.backgroundColor = '#3498db';
+    function getday(ids){
+        document.getElementById('getday'+day).style.backgroundColor = "#e7e7e7";
+        let new_day = document.getElementById('getday'+ids);
+        new_day.style.backgroundColor = '#3498db';
+        day = ids;
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{day:day},//把cateid传递到Controller里的方法中去
+            url:"coachconfig/paikesc/day",//这是方法地址
+            success:function (data,ret) {
+                document.getElementById("item").innerHTML = '';
+                content = '';
+                for(i=0;i<data.msg.time_list.length;i++){
+                    content +='<tr><th style="text-align: center; vertical-align: middle; " ><div class="th-inner ">'+data.msg.time_list[i]['starttimes']+'-'+data.msg.time_list[i]['endtimes']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['number']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['cartype1']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['cartype2']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner " id="status'+i+'">'+data.msg.time_list[i]['status']+'</div></th><th style="text-align: center; vertical-align: middle; ">  <div class="th-inner">'
+                    if(data.msg.time_list[i]['time_status']){
+                        if(data.msg.time_list[i]['status'] == '开启中'){
+                            content +='<button class="btn btn-success" id="time_status'+i+'" onclick="operation('+data.msg.id+','+i+')">'+data.msg.time_list[i]['time_status']+'</button><button class="btn btn-success add_paike" style="margin-left:5px" data-url="coachconfig/paikesc/add_paike?id='+i+'&coach_id='+data.msg.id+'&day='+data.msg.day+'" data-title="排课" >排课</button></div></th></tr>';
+                            // <button class="btn btn-success" id="paike'+i+'" onclick="paike('+data.msg.id+','+i+')">平台排课'+(data.msg.time_list[i]['cartype1']+data.msg.time_list[i]['cartype2'])+'/'+data.msg.time_list[i]['number']+'</button></div></th></tr>';
+                            
+                        }else{
+                            content +='<button class="btn btn-success" id="time_status'+i+'" onclick="operation('+data.msg.id+','+i+')">'+data.msg.time_list[i]['time_status']+'</button></div></th></tr>';
+                        }
+                    }else{
+                        content +='当前时间已过时';
+                    }
+                }
+                var tbody=document.getElementById("item")
+                tbody.innerHTML= content
+            }
+        });
+    }
+
+    function operation(id,item){
+        // console.log(event.target.innerHTML)
+        var asd = event;
+        let inner = event.target.innerHTML
+        
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:{id:id,item:item,day:day,inner:inner},//把cateid传递到Controller里的方法中去
+            url:"coachconfig/paikesc/operation",//这是方法地址
+            success:function (data,ret){
+                // console.log(data)
+                document.getElementById("item").innerHTML = '';
+                content = '';
+
+                for(i=0;i<data.msg.time_list.length;i++){
+                    content +='<tr><th style="text-align: center; vertical-align: middle; " ><div class="th-inner ">'+data.msg.time_list[i]['starttimes']+'-'+data.msg.time_list[i]['endtimes']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['number']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['cartype1']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner ">'+data.msg.time_list[i]['cartype2']+'</div></th><th style="text-align: center; vertical-align: middle; "><div class="th-inner " id="status'+i+'">'+data.msg.time_list[i]['status']+'</div></th><th style="text-align: center; vertical-align: middle; ">  <div class="th-inner">'
+                    if(data.msg.time_list[i]['time_status']){
+                        if(data.msg.time_list[i]['status'] == '开启中'){
+                            content +='<button class="btn btn-success" id="time_status'+i+'" onclick="operation('+data.msg.id+','+i+')">'+data.msg.time_list[i]['time_status']+'</button><button class="btn btn-success add_paike" style="margin-left:5px" data-url="coachconfig/paikesc/add_paike?id='+i+'&coach_id='+data.msg.id+'&day='+data.msg.day+'" data-title="排课" >排课</button></div></th></tr>';
+                            
+                        }else{
+                            content +='<button class="btn btn-success" id="time_status'+i+'" onclick="operation('+data.msg.id+','+i+')">'+data.msg.time_list[i]['time_status']+'</button></div></th></tr>';
+                        }
+                    }else{
+                        content +='当前时间已过时';
+                    }
+                }
+                var tbody=document.getElementById("item")
+                tbody.innerHTML= content
+            }
+        });
+    }
+
+   
+    
+</script>

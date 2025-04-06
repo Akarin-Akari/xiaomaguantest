@@ -1,0 +1,66 @@
+<form id="add-form" class="form-horizontal form-ajax" role="form" data-toggle="validator" method="POST" action="">
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Name')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-name" class="form-control" data-rule="required" name="row[name]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-local" class="control-label col-xs-12 col-sm-2">{:__('file_path')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input type="text" name="row[file_path]" data-rule="required" id="c-local" class="form-control" />
+        </div>
+    </div>
+
+   
+    <div class="form-group">
+        <label for="c-local" class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="button" id="faupload-local" class="btn btn-primary faupload" data-mimetype="docx" data-input-id="c-local" data-url="{:url('ajax/upload')}">
+                <i class="fa fa-upload"></i> {:__("上传合同")}
+            </button>
+            <a style="margin: 0 20px" onclick="dianji()" >{:__("合同变量对应关系")}</a>
+            <a href="{$Tpl}" target="_blank">{:__("点击下载模板")}</a>
+        </div>
+    </div>
+    
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Course_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-course_id" class="form-control selectpicker"  multiple="" required name="row[course_id][]">
+                <option value="">没有选中任何项</option>
+                {foreach name="courseList" item="vo"}
+                    <option value="{$vo.id}" {in name="vo.id" value=""}selected{/in}>{$vo.course}--{$vo.money}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Validitytime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-validitytime" data-rule="required" class="form-control"  data-use-current="true" name="row[validitytime]" type="text" value="360">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+
+function dianji (){
+    layer.open({
+        area: ['550px'],
+        content:'<div style="text-align:center">合同变量对应关系</div><table style="text-align: center;margin: auto;"><tr><th style="padding-right: 150px;">学员姓名</th><th style="padding-left:50px"> ${学员姓名}</th></tr><tr><th style="padding-right: 150px;">联系电话</th><th style="padding-left:50px"> ${联系电话}</th></tr><tr><th style="padding-right: 150px;">邮箱</th><th style="padding-left:50px"> ${邮箱}</th></tr><tr><th style="padding-right: 150px;">身份证号</th><th style="padding-left:50px"> ${身份证号}</th></tr><tr><th style="padding-right: 150px;">性别</th><th style="padding-left:50px"> ${性别}</th></tr><tr><th style="padding-right: 150px;">培训车型</th><th style="padding-left:50px"> ${培训车型}</th></tr><tr><th style="padding-right: 150px;">应收金额</th><th style="padding-left:50px"> ${应收金额}</th></tr><tr><th style="padding-right: 150px;">应收金额大写</th><th style="padding-left:50px"> ${应收金额大写}</th></tr><tr><th style="padding-right: 150px;">优惠金额</th><th style="padding-left:50px"> ${优惠金额}  </th></tr><tr><th style="padding-right: 150px;">实收金额</th><th style="padding-left:50px"> ${实收金额}</th></tr><tr><th style="padding-right: 150px;">欠费金额</th><th style="padding-left:50px"> ${欠费金额}</th></tr><tr><th style="padding-right: 150px;">学员地址</th><th style="padding-left:50px"> ${学员地址}</th></tr></table>'
+    });
+}
+    
+</script>

@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'Id'                   => 'ID',
+    'Cooperation_id'       => '所属合作方id',
+    'Space_id'             => '所属馆id',
+    'Stu_id'               => '学员编号',
+    'Keer_hege'            => '科二合格次数',
+    'Keer_hege_status'     => '科二合格预警',
+    'Keer_hege_status 0'   => '关闭',
+    'Keer_hege_status 1'   => '开启',
+    'Kesan_hege'           => '科三合格次数',
+    'Kesan_hege_status'    => '科三合格预警',
+    'Kesan_hege_status 0'  => '关闭',
+    'Kesan_hege_status 1'  => '开启',
+    'Keer_leiji'           => '科二累计时长',
+    'Keer_leiji_status'    => '科二累计时长预警',
+    'Keer_leiji_status 0'  => '关闭',
+    'Keer_leiji_status 1'  => '开启',
+    'Kesan_leiji'          => '科三累计时长',
+    'Kesan_leiji_status'   => '科三累计时长预警',
+    'Kesan_leiji_status 0' => '关闭',
+    'Kesan_leiji_status 1' => '开启',
+    'Createtime'           => '创建时间',
+    'Updatetime'           => '更新时间',
+    'Deletetime'           => '软删除时间',
+    'Admin.nickname'       => '昵称',
+    'Student.name'         => '姓名',
+    'Student.phone'        => '手机号码'
+];

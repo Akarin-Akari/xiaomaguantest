@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'Id'                 => 'ID',
+    'Openid'             => '微信open_id',
+    'Status'             => '状态(单选)',
+    'Status yes'         => '在职',
+    'Set status to yes'  => '设为在职',
+    'Status no'          => '离职',
+    'Set status to no'   => '设为离职',
+    'Name'               => '姓名',
+    'Phone'              => '手机号码',
+    'Car_type'           => '车类型(单选)',
+    'Car_type 1'         => '小车',
+    'Car_type 2'         => '大车',
+    'Sex'                => '性别(单选)',
+    'Sex male'           => '男',
+    'Sex female'         => '女',
+    'Leader'             => '组长',
+    'Space_id'           => '所属馆id',
+    'Cooperation_id'     => '合作方',
+    'Sign_status'        => '分配节点',
+    'Sign_status no'     => '未标记',
+    'Sign_status yes'    => '标记',
+    'Message_status'     => '信息已读',
+    'Message_status no'  => '未读',
+    'Message_status yes' => '已读',
+    'Createtime'         => '创建时间',
+    'Updatetime'         => '更新时间',
+    'Admin.nickname'     => '昵称'
+];

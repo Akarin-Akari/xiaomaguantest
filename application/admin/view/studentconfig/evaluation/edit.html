@@ -1,0 +1,69 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Stu_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-stu_id" data-rule="required" data-source="stu/index" class="form-control selectpage" name="row[stu_id]" type="text" value="{$row.stu_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cooperation_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-cooperation_id" data-rule="required" data-source="cooperation/index" class="form-control selectpage" name="row[cooperation_id]" type="text" value="{$row.cooperation_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-space_id" data-rule="required" data-source="space/index" class="form-control selectpage" name="row[space_id]" type="text" value="{$row.space_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Student_type')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-student_type" class="form-control selectpicker" name="row[student_type]">
+                {foreach name="studentTypeList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.student_type"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Coach_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-coach_id" data-rule="required" data-source="coach/index" class="form-control selectpage" name="row[coach_id]" type="text" value="{$row.coach_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ordernumber')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-ordernumber" data-rule="required" class="form-control" name="row[ordernumber]" type="text" value="{$row.ordernumber|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_evaluate')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-space_evaluate" class="form-control" name="row[space_evaluate]" type="text" value="{$row.space_evaluate|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Overall')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-overall" class="form-control selectpicker" name="row[overall]">
+                {foreach name="overallList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.overall"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-primary btn-embossed disabled">{:__('OK')}</button>
+        </div>
+    </div>
+</form>

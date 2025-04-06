@@ -1,0 +1,153 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-space_id" class="form-control selectpicker" name="row[space_id]">
+                {foreach name="spaceList" item="vo"}
+                    <option value="{$vo.space_id}" {in name="vo.space_id" value=""}selected{/in}>{$vo.space_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+   
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Machine_code')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-machine_code" data-rule="required" class="form-control" name="row[machine_code]" type="text" value="{$row.machine_code|htmlentities}">
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Student_code')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-student_code" class="form-control" name="row[student_code]" type="text" value="{$row.student_code|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Brand')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-brand" class="form-control" name="row[brand]" type="text" value="{$row.brand|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Regionimage')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-regionimage" class="form-control" size="50" name="row[regionimage]" type="text" value="{$row.regionimage|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-regionimage" class="btn btn-danger faupload" data-input-id="c-regionimage" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp,image/webp" data-multiple="false" data-preview-id="p-regionimage"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-regionimage" class="btn btn-primary fachoose" data-input-id="c-regionimage" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-regionimage"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-regionimage"></ul>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('State')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="stateList" item="vo"}
+            <label for="row[state]-{$key}"><input id="row[state]-{$key}" name="row[state]" type="radio" value="{$key}" {in name="key" value="$row.state"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">预约时间段/人数配置</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="row" id="interval">
+                <div class="col-xs-4 col-md-4">
+                    开始时间:
+                </div>
+                <div class="col-xs-4 col-md-4">
+                    结束时间:
+                </div>
+                <div class="col-xs-4 col-md-4">
+                    分配模拟器数:
+                </div>
+                {volist name="reserve" id="vo"}
+                <div id="config_time{$vo.id}">
+                    <div class="col-xs-4 col-md-4">
+                        <input id="interval_start_times_{$vo.id}" class="form-control datetimepicker" data-date-format="HH:mm" name="row[interval-{$vo.id}][]" type="text" value="{$vo.starttimes}" onblur="set_time({$vo.id})">
+                    </div>
+                    <div class="col-xs-4 col-md-4">
+                        <input id="interval_end_times_{$vo.id}" class="form-control datetimepicker" data-date-format="HH:mm" data-use-current="true" name="row[interval-{$vo.id}][]" type="text" value="{$vo.endtimes}" readonly >
+                    </div>
+                    <div class="col-xs-4 col-md-4">
+                        <input id="{$vo.id}" class="form-control" name="row[interval-{$vo.id}][]" type="text" value="{$vo.number}">
+                    </div>
+                </div>
+                {/volist}
+            </div>
+            <div id="operate">
+                <button type="button" class="btn btn-primary btn-sm" onclick="add_interval()">添加</button>
+                <button id="del_button" type="button" class="btn btn-danger btn-sm" onclick="del_interval()" >删除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-primary btn-embossed disabled">{:__('OK')}</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    var i = 0;
+    var space = {$space};
+    var order_length = space[0]['order_length'];
+    myselect = document.getElementById('c-space_id');
+    var select_space = myselect.selectedIndex;
+    order_length = space[select_space]['order_length'];
+    function add_interval(){
+        i++;
+        var content = '<div id="config_time'+i+'"><div class="col-xs-4 col-md-4"><input id="interval_start_times_'+i+'" class="form-control datetimepicker"  data-date-format="HH:mm"  data-use-current="true" name="row[new_'+i+'][]" type="text" onblur="set_time('+i+')"></div>'
+        content += '<div class="col-xs-4 col-md-4"><input id="interval_end_times_'+i+'" class="form-control datetimepicker" data-date-format="HH:mm" data-use-current="true" name="row[new_'+i+'][]" type="text" readonly></div>'
+        content += '<div class="col-xs-4 col-md-4"><input id="number" class="form-control" name="row[new_'+i+'][]" type="text"></div></div>'
+        $('#interval').append(content)
+        $('.datetimepicker').datetimepicker();
+    }
+
+    function set_order_length(){
+        myselect = document.getElementById('c-space_id');
+        index = myselect.selectedIndex;
+        console.log(order_length)
+        order_length = space[index]['order_length'];
+    }
+
+    function add0(m){
+        return m<10?'0'+m:m 
+    }
+
+    function set_time(index){
+        start_time = document.getElementById('interval_start_times_'+index).value;
+        console.log(index)
+        let date = new Date();
+        let date_start_time = date.toLocaleDateString()+' '+start_time;
+        let time1 = new Date(date_start_time).getTime()
+        let time2 = time1+1000*(order_length*3600)
+        let date_end_time = new Date(time2)
+        let hours = date_end_time.getHours()
+        let minute = date_end_time.getMinutes()
+        let second = date_end_time.getSeconds()
+        end_time = add0(hours)+':'+add0(minute)
+        // console.log(order_length)
+        $('#interval_end_times_'+index).val(end_time);
+    }
+
+    function del_interval(index){
+        var number = $("#interval").children().length;
+        if(number >2){
+            $('#interval').children().eq(-1).remove()
+        }else if(number == 2){
+            $('#interval').children().eq(-1).remove()
+            $("#del_button").hide()
+        }
+        
+    }
+</script>

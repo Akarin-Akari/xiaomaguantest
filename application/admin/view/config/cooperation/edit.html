@@ -1,0 +1,284 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <!-- <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Admin_title')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-admin_title" class="form-control" data-rule="required" name="row[admin_title]" type="text" value="{$row.admin_title|htmlentities}" maxlength="10">
+        </div>
+    </div> -->
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cooperation_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-cooperation_id" class="form-control selectpicker" name="row[cooperation_id]">
+                {foreach name="cooperationList" item="vo"}
+                    <option value="{$vo.cooperation_id}" {in name="vo.cooperation_id" value="$row.cooperation_id"}selected{/in}>{$vo.cooperation_name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ai_agree_sc')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-ai_agree_sc" data-rule="required" class="form-control selectpicker" name="row[ai_agree_sc]">
+                {foreach name="aiAgreeScList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.ai_agree_sc"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Ai_pass_coach')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-ai_pass_coach" class="form-control selectpicker" name="row[ai_pass_coach]">
+                {foreach name="aiPassCoachList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.ai_pass_coach"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_pass_sc')}:</label>
+        <div class="col-xs-12 col-sm-8">
+
+            <select  id="c-keer_pass_sc" data-rule="required" class="form-control selectpicker" name="row[keer_pass_sc]">
+                {foreach name="keerPassScList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.keer_pass_sc"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_pass_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-keer_pass_time" class="form-control" name="row[keer_pass_time]" type="number" value="{$row.keer_pass_time|htmlentities}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_pass_sc')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-kesan_pass_sc" data-rule="required" class="form-control selectpicker" name="row[kesan_pass_sc]">
+                {foreach name="kesanPassScList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.kesan_pass_sc"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_pass_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-kesan_pass_time" class="form-control" name="row[kesan_pass_time]" type="number" value="{$row.kesan_pass_time|htmlentities}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_day')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-reserve_day" class="form-control" name="row[reserve_day]" type="number" value="{$row.reserve_day|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Promote_day_state')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-promote_day_state" data-rule="required" class="form-control selectpicker" name="row[promote_day_state]">
+                {foreach name="getPromopteDayStateList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.promote_day_state"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Promote_day')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-promote_day" class="form-control" name="row[promote_day]" type="number" value="{$row.promote_day|htmlentities}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Distribute_state')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-distribute_state" data-rule="required" class="form-control selectpicker" name="row[distribute_state]">
+                {foreach name="getDistributeStateList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.distribute_state"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Forbidden_pay_state')}:</label>
+        <div class="col-xs-12 col-sm-8">
+                        
+            <select  id="c-forbidden_pay_state" data-rule="required" class="form-control selectpicker" name="row[forbidden_pay_state]">
+                {foreach name="getForbiddenPayStateList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.forbidden_pay_state"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Forbidden_tmp_stu')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-forbidden_tmp_stu" data-rule="required" class="form-control selectpicker" name="row[forbidden_tmp_stu]">
+                {foreach name="getForbiddenTmpStuList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.forbidden_tmp_stu"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Forbidden_not_reserve')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-forbidden_not_reserve" data-rule="required" class="form-control selectpicker" name="row[forbidden_not_reserve]">
+                {foreach name="getForbiddenNotReserveList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.forbidden_not_reserve"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Reserve_warn')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-process" class="form-control selectpicker"  multiple="" name="row[reserve_warn][]">
+                {foreach name="getReserveWarnList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.reserve_warn"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-warn_text" class="control-label col-xs-12 col-sm-2">{:__('提示文字')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-warn_text" class="form-control" name="row[warn_text]" >{$row.warn_text}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="c-warn_text2" class="control-label col-xs-12 col-sm-2">{:__('提示文字2')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-warn_text2" class="form-control" name="row[warn_text2]" >{$row.warn_text2}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Warn_start_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-warn_start_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[warn_start_time]" type="text" value="{$row.warn_start_time}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Warn_end_time')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-warn_end_time" class="form-control datetimepicker" data-date-format="HH:mm:ss" data-use-current="true" name="row[warn_end_time]" type="text" value="{$row.warn_end_time}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Warn_date_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-warn_date_status" data-rule="required" class="form-control selectpicker" name="row[warn_date_status]">
+                {foreach name="getWarnDateStatusList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.warn_date_status"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Warn_continue')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-warn_continue" data-rule="required" class="form-control selectpicker" name="row[warn_continue]">
+                {foreach name="getWarnContinueList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.warn_continue"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Order_num')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-order_num" class="form-control" name="row[order_num]" type="number" value="{$row.order_num|htmlentities}">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Forbidden_tmp_stu_ai')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-forbidden_tmp_stu_ai" data-rule="required" class="form-control selectpicker" name="row[forbidden_tmp_stu_ai]">
+                {foreach name="getForbiddenTmpStuAiList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.forbidden_tmp_stu_ai"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Forbidden_not_reserve_ai')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-forbidden_not_reserve_ai" data-rule="required" class="form-control selectpicker" name="row[forbidden_not_reserve_ai]">
+                {foreach name="getForbiddenNotReserveAiList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.forbidden_not_reserve_ai"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Pay_cooperation')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <select  id="c-pay_cooperation" data-rule="required" class="form-control selectpicker" name="row[pay_cooperation]">
+                {foreach name="getPayCooperationStateList" item="vo"}
+                    <option value="{$key}" {in name="key" value="$row.pay_cooperation"}selected{/in}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Icon_image')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-icon_image" class="form-control" size="50" name="row[icon_image]" type="text" value="{$row.icon_image|htmlentities}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="faupload-icon_image" class="btn btn-danger faupload" data-input-id="c-icon_image" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-icon_image"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-icon_image" class="btn btn-primary fachoose" data-input-id="c-icon_image" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-icon_image"></span>
+            </div>
+            <ul class="row list-inline faupload-preview" id="p-icon_image"></ul>
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

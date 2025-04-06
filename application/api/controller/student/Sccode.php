@@ -1,0 +1,762 @@
+<?php
+
+namespace app\api\controller\student;
+
+use app\common\controller\Api;
+use think\cache;
+use think\Db;
+/**
+ * 开机流程所需接口
+ */
+class Sccode extends Api
+{
+    protected $noNeedLogin = ['*'];
+    protected $noNeedRight = ['*'];
+
+    public function _initialize()
+    {
+        parent ::_initialize();
+        $this->car = new \app\admin\model\Car;
+        $this->student = new \app\admin\model\Student;
+        $this->device = new \app\admin\model\Device;
+        $this->intentstudent = new \app\admin\model\Intentstudent;
+        $this->space = new \app\admin\model\Space;
+        $this->order = new \app\admin\model\Order;
+        $this->temporaryorder = new \app\admin\model\Temporaryorder;
+        $this->admin = new \app\admin\model\Admin;
+        $this->authgroup = new \app\admin\model\AuthGroup;
+        $this->authgroupaccess = new \app\admin\model\AuthGroupAccess;
+        $this->common = new \app\api\controller\Common;
+        $this->cooperation = new \app\admin\model\Cooperation;
+
+    }
+
+    public function getordertest(){
+        $params = $this->request->post();
+        // Cache::set('params',$params);
+        // $params['stu_id'] = 'CSN20210425112607670801';
+        // $params['machine_code'] = 'FJNCxh202207002xh';//10031
+        // $params['student_type'] = 'student';
+        // $params = $this->request->post();
+        // Cache::set('params',$params);
+        // $params['stu_id'] = 'CSN20211124201239782898';
+        // $params['machine_code'] = '10031';
+        // $params['student_type'] = 'student';
+        if(empty($params['stu_id']) || empty($params['machine_code']) || empty($params['student_type'])){
+            $this->error('参数缺失');
+        }
+        $stu_id = $params['stu_id'];
+        $student_type = $params['student_type'];
+        $machine_code = $params['machine_code'];
+        $student = $this->getstudent($stu_id,$student_type);
+        $today_start = strtotime(date('Y-m-d 00:00:00',time()));
+        $today_end = $today_start + 24*3600-1;
+        $space_machine = $this->machinecar->with('space')->where(['machinecar.machine_code'=>$machine_code])->find();
+        $pay_status = $space_machine['space']['pay_status'];
+        $pay = $this->device->where(['space_id'=>$space_machine['space']['id']])->find();
+        $space_machine['pay'] = [];
+        if($pay_status && $pay){
+            $space_machine['pay'] = $pay;
+            $coo =$this->cooperation->where(['cooperation_id'=>$space_machine['cooperation_id']])->find();
+
+            if($coo){
+                $space_machine['pay']['subject_img'] =$coo['icon_image'];
+            }
+            $space_machine['pay']['client_sn'] = $this->getPayId();
+        }
+        $machine_id = $space_machine['id'];
+        $space_id = $space_machine['space_id'];
+
+        $order_length = $space_machine['space']['order_length'];
+        $order_time = $order_length*60*60;
+
+        $where['space_id'] = $space_id;
+        $where['teach_state'] = 'yes';
+        $coachlist = Db::name('coach')->where($where)->field(['coach_id','name'])->select();
+
+        if(!$space_machine){
+            $this->error('请输入正确的机器码');
+        }
+
+        //违约订单
+        $this->not_coming_order($stu_id,$today_start,$today_end,$student_type);
+
+        //完成正在进行的订单
+        $this->finish_today_order($stu_id,$today_start,$today_end,$student_type);
+
+        //其他馆的异常订单
+        $this->unusual_order($stu_id,$space_machine,$today_start,$today_end,$student_type);
+
+        //订单是否可以开机
+        $this->order_boot($stu_id,$today_start,$today_end,$machine_code,$student_type,$student,$coachlist,$order_time);
+        
+        //学员，教员都没授权的预约单直接开机
+        $this->reserve_order($stu_id,$today_start,$today_end,$machine_id,$space_id,1,$coachlist,$order_time);
+        //没有订单,生成订单
+        $this->create_order($stu_id,$space_machine,$today_start,$today_end,'paid',$student_type,$coachlist,$order_time,$student['subject_type']);
+
+        $this->error('订单异常');
+    }
+
+    /**
+     * 确认订单
+     */
+    public function sureorder(){
+        $params = $this->request->post();
+        // $params['machine_code'] = '10020';
+        // $params['stu_id'] = 'CSN20210409102726705658';
+        // $params['student_type'] = 'intent_student';
+        // $params['ordernumber'] = '';
+        // $params['reserve_starttime'] = time();
+        // $params['reserve_endtime'] = time()+3600;
+        // $params['should_endtime'] = time()+3600;
+        // $params['coach_id'] = 'CTN20210311103714746874';
+        // $params['order_status'] = 'paid';
+        // $params['ordertype'] = 2;
+        // $params['car_type'] = 'cartype1';
+        // $params['subject_type'] = 'subject2';
+        if(empty($params['stu_id'])|| empty($params['student_type']) ||empty($params['reserve_starttime'])||empty($params['reserve_endtime'])|| empty($params['machine_code']) ||
+         empty($params['order_status']) || empty($params['ordertype']) || empty($params['coach_id']) || empty($params['car_type']) 
+         || empty($params['subject_type']) || empty($params['should_endtime']) ){
+            $this->error('参数缺失');
+        }
+        $student_type = $params['student_type'];
+        $this->time_valatite($params['reserve_starttime'],$params['reserve_endtime']);
+        $stu_id = $params['stu_id'];
+        if($student_type == 'student'){
+            $student = $this->student->with(['space'])->where('stu_id',$stu_id)->find();
+        }else{
+            $student = $this->intentstudent->where('stu_id',$stu_id)->find();
+        }
+        if(!$student){
+            $this->error('当前学员编号异常');
+        }
+        if(!empty($params['ordernumber'])){
+            $should_endtime = $this->order->where('ordernumber',$params['ordernumber'])->find();
+            if($should_endtime['student_boot_type'] == 1){
+                $this->success('学员已授权');
+            }
+        }
+        $this->success('返回成功');
+    }
+
+    public function getPayId()
+    {
+        $str = date('Ymd').substr(implode('', array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8); 
+        return $str;
+    }
+
+
+
+    public function unusual_ordertest($stu_id,$space_machine,$today_start,$today_end,$student_type)
+    {
+        $where['order_status'] = ['in',['unpaid','paid','accept_unexecut','executing']];
+        $where['stu_id'] = $stu_id;
+        $where['space_id'] = ['neq',$space_machine['space_id']];
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+        if($student_type == 'student'){
+            $order = $this->order->where($where)->select();
+            foreach($order as $v){
+                if($v['order_status'] == 'executing'){
+                    $update['order_status'] = 'finished';
+                    $where_order['id'] = $v['id'];
+                    $this->order->where($where_order)->update($update);
+                }else{
+                    $update['order_status'] = 'cancel_refunded';
+                    $where_order['id'] = $v['id'];
+                    $this->order->where($where_order)->update($update);
+                }
+            }
+        }else{
+            $order = $this->temporaryorder->where($where)->select();
+            foreach($order as $v){
+                if($v['order_status'] == 'executing'){
+                    $update['order_status'] = 'finished';
+                    $where_order['id'] = $v['id'];
+                    $this->temporaryorder->where($where_order)->update($update);
+                }else{
+                    $update['order_status'] = 'cancel_refunded';
+                    $where_order['id'] = $v['id'];
+                    $this->temporaryorder->where($where_order)->update($update);
+                }
+            }
+        }
+    }
+
+    public function getorder(){
+        $params = $this->request->post();
+        // Cache::set('params',$params);
+        // $params['stu_id'] = 'CSN20211130162337381097';
+        // $params['machine_code'] = '10000002';//10031
+        // $params['student_type'] = 'student';
+        // $params = $this->request->post();
+        // Cache::set('params',$params);
+        // $params['stu_id'] = 'CSN20211124201239782898';
+        // $params['machine_code'] = '10031';
+        // $params['student_type'] = 'student';
+        if(empty($params['stu_id']) || empty($params['machine_code']) || empty($params['student_type'])){
+            $this->error('参数缺失');
+        }
+
+        $stu_id = $params['stu_id'];
+        $student_type = $params['student_type'];
+        $machine_code = $params['machine_code'];
+        $student = $this->getstudent($stu_id,$student_type);
+        $today_start = strtotime(date('Y-m-d 00:00:00',time()));
+        $today_end = $today_start + 24*3600-1;
+        $space_machine = $this->machinecar->with('space')->where(['machinecar.machine_code'=>$machine_code])->find();
+        $pay_status = $space_machine['space']['pay_status'];
+        $pay = $this->device->where(['space_id'=>$space_machine['space']['id']])->find();
+        $space_machine['pay'] = [];
+        if($pay_status && $pay){
+            $space_machine['pay'] = $pay;
+            $coo =$this->cooperation->where(['cooperation_id'=>$space_machine['cooperation_id']])->find();
+            $space_machine['pay']['subject_img'] = 'https://admin.aivipdriver.com/uploads/20220519/d9d910629d5d02a31f5bb567286f3756.jpg';
+            if($coo){
+                $space_machine['pay']['subject_img'] = 'https://admin.aivipdriver.com'.$coo['icon_image'];
+            }
+            // $space_machine['pay']['total_amount'] = '';
+            // $space_machine['pay']['terminal_sn'] = '';
+            $space_machine['pay']['client_sn'] = $this->getPayId();
+            // $space_machine['pay']['subject'] = '模拟器上机缴费';
+        }
+        $machine_id = $space_machine['id'];
+        $space_id = $space_machine['space_id'];
+
+        $order_length = $space_machine['space']['order_length'];
+        $order_time = $order_length*60*60;
+
+        $where['space_id'] = $space_id;
+        $where['teach_state'] = 'yes';
+        $coachlist = Db::name('coach')->where($where)->field(['coach_id','name'])->select();
+
+        if(!$space_machine){
+            $this->error('请输入正确的机器码');
+        }
+
+        //违约订单
+        $this->not_coming_order($stu_id,$today_start,$today_end,$student_type);
+
+        //完成正在进行的订单
+        $this->finish_today_order($stu_id,$today_start,$today_end,$student_type);
+
+        //其他馆的异常订单
+        $this->unusual_order($stu_id,$space_machine,$today_start,$today_end,$student_type);
+
+        // if($student_type == 'student'){
+        //     $this->machine_validate($stu_id,$space_machine);
+        // }
+        //订单是否可以开机
+        $this->order_boot($stu_id,$today_start,$today_end,$machine_code,$student_type,$student,$coachlist,$order_time);
+        
+        //学员，教员都没授权的预约单直接开机
+        $this->reserve_order($stu_id,$today_start,$today_end,$machine_id,$space_id,1,$coachlist,$order_time);
+        //没有订单,生成订单
+        $this->create_order($stu_id,$space_machine,$today_start,$today_end,'paid',$student_type,$coachlist,$order_time,$student['subject_type']);
+
+        $this->error('订单异常');
+    }
+    
+
+    public function getstudent($stu_id,$student_type)
+    {
+        if($student_type == 'student'){
+            $student = $this->student->where('stu_id',$stu_id)->find();
+        }elseif($student_type == 'intent_student'){
+            $student = Db::name('intent_student')->where('stu_id',$stu_id)->find();
+            $student['subject_type'] = 'subject2';
+        }else{
+            $this->error('学员类型错误');
+        }
+        return $student;
+    }
+
+
+    /**
+     * 时间验证
+     */
+    public function time_valatite($reserve_starttime,$reserve_endtime){
+        $time = strtotime(date('Y-m-d 00:00:00',time()));
+        if(($time > $reserve_starttime) || ($time >$reserve_endtime)){
+            $this->error('提交时间异常');
+        }
+    }
+
+    /**
+     * 正式学员验证场馆
+     */
+    public function space_validate($stu_id,$space){
+        $student = $this->student->with(['space'])->where('stu_id',$stu_id)->find();
+        $allow_space = explode(',',$space['allow_space']);
+        $allow_space[] = (string)$space['id'];
+        if(in_array($student['space_id'],$allow_space)){
+            if(($student['space']['times_limit_status'] == 1)){
+                //自馆学员,学时限制
+                if( $student['period_surplus'] <= 0){
+                    $this->error('您当前没有学时，请联系管理员充值学时后再操作');
+                }
+            }elseif(($space['id'] != $student['space_id']) && ($space['times_limit_cooperation_status'] == 1)){
+                //合作馆学员,次数限制
+                $count_order['order_status'] = ['in',['unpaid','paid','accept_unexecut','executing','finished']];
+                $count_order['space_id'] = $space['id'];
+                $count = $this->order->where($count_order)->count();
+                if($count >= $space['times_limit_cooperation']){
+                    $this->error('当前场馆对您学习次数有限，请联系您报名所属场馆了解详情后再上机');
+                }
+            }
+        }else{
+            $this->error('当前场馆不对您开放，请联系管理员后再操作');
+        }
+
+    }
+
+    public function order_boot($stu_id,$today_start,$today_end,$machine_code,$student_type,$student,$coachlist,$order_time)
+    {
+        //订单开机过的直接开机
+        $where['stu_id'] = $stu_id;
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+        // $where['student_boot_type'] = 1;
+        $where['order_status'] = ['neq','cancel_refunded'];
+
+        if($student_type == 'student'){
+            $order =$this->order->with(['space','machinecar'])->where($where)->order('reserve_starttime desc')->find();
+        }else{
+            $order =$this->temporaryorder->with(['space','machinecar'])->where($where)->order('reserve_starttime desc')->find();
+        }
+        // var_dump($order->toArray());exit;
+        
+        $data['ordernumber'] = $order['ordernumber'];
+        $data['student_type'] =  $student_type;
+        // var_dump(222);exit;
+        //没开机的直接开机
+        if($order && !$order['starttime']&& $order['student_boot_type']==1){
+            $machine = $this->machinecar->where('machine_code',$machine_code)->find();
+            if($machine_code !==$order['machinecar']['machine_code']){
+                $machine_change['machine_id'] = $machine['id'];
+                $where_order['ordernumber'] = $order['ordernumber'];
+                if($student_type == 'student'){
+                    $this->order->where($where_order)->update($machine_change);
+                }else{
+                    $this->temporaryorder->where($where_order)->update($machine_change);
+                }
+                // $order['machine_code'] = $machine_code;
+                $order['machinecar'] = $machine;
+                $order['machine_id'] = $machine['id'];
+                // Cache::set('testmachine',$machine_code);
+                // Cache::set('order1',$order['machinecar']['machine_code']);
+                $this->put_info($order,$student_type);
+                $this->error('已为您更换机器码，授权成功');
+            }
+            $order['machine_code'] = $machine_code;
+            $order['machine_id'] = $machine['id'];
+            $this->put_info($order,$student_type);
+            // Cache::set('order1',$machine['machine_code']);
+            // Cache::set('testmachine',$machine_code);
+            $this->error('授权成功');
+        }elseif($order && $order['should_endtime'] > time() && $order['student_boot_type'] ==1 && $machine_code !==$order['machinecar']['machine_code']){
+            $machine = $this->machinecar->where('machine_code',$machine_code)->find();
+            $machine_change['machine_id'] = $machine['id'];
+            $where_order['ordernumber'] = $order['ordernumber'];
+            if($student_type == 'student'){
+                $this->order->where($where_order)->update($machine_change);
+            }else{
+                $this->temporaryorder->where($where_order)->update($machine_change);
+            }
+
+            $order['machinecar'] = $machine;
+            $order['machine_id'] = $machine['id'];
+            // Cache::set('testmachine',$machine_code);
+            // Cache::set('order1',$machine['machine_code']);
+            // $order['machine_code'] = $machine_code;
+            $this->put_info($order,$student_type);
+            $this->error('已为您更换机器码，授权成功');
+        }elseif($order && !$order['starttime'] && $order['reserve_starttime'] > $today_start && $order['reserve_starttime'] < $today_end && !$order['student_boot_type']){
+            //有订单，预约在今日，学员没授权的，开机。
+            $data['space_name'] = $order['space']['space_name'];
+            $data['space_id'] = $order['space_id'];
+            $data['machine_id'] = $order['machinecar']['id'];
+            $data['reserve_starttime'] = $order['reserve_starttime'];
+            $data['reserve_endtime'] = $order['reserve_endtime'];
+            $data['starttime'] = '';
+            $data['endtime'] = '';
+            // $data['should_endtime'] = time()+(3600*2);
+
+            // if($machine_code == '10031'){
+                $data['should_endtime'] = time()+$order_time;
+            // }
+
+            $data['order_status'] = $order['order_status'];
+            $data['ordertype'] = $order['ordertype'];
+            $data['car_type'] = $order['car_type'];
+            $data['car_type_text'] = $order['car_type_text'];
+            $data['coachlist'] = $coachlist;
+            $data['ordernumber'] = $order['ordernumber'];
+            $this->success('返回成功',$data);
+        }elseif($order && $order['starttime'] && $order['should_endtime'] > time() && $order['student_boot_type'] ==1){
+            //有订单，预约时间在今日，学员授权的，开机。
+            $this->put_info($order,$student_type);
+            $this->error('授权成功');
+        }
+
+        
+    }
+
+    /**
+     * 创建订单
+     */
+    public function create_order($stu_id,$space_machine,$today_start,$today_end,$order_status,$student_type,$coachlist,$order_time,$subject_type){
+        $where['order_status'] = ['neq','cancel_refunded'];
+        $where['stu_id'] = $stu_id;
+        $where['student_boot_type'] = 0;
+        $where['space_id'] = $space_machine['space_id'];
+        $where['machine_id'] = $space_machine['id'];
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+
+        if($student_type == 'student'){
+            $order = $this->order->where($where)->find();
+        }else{
+            $order = $this->temporaryorder->where($where)->find();
+        }
+        if(!$order){
+            // var_dump($space_machine);exit;
+            $data['space_name'] = $space_machine['space']['space_name'];
+            $data['space_id'] = $space_machine['space_id'];
+            $data['cooperation_id'] = $space_machine['cooperation_id'];
+            $data['machine_id'] = $space_machine['id'];
+            $data['pay'] = $space_machine['pay'];
+            $data['pay_status'] = $space_machine['space']['pay_status'];
+            $data['reserve_starttime'] = time();
+            // $data['pay'] = $space_machine['pay'];
+            // $data['reserve_endtime'] = time()+3600*2;
+            $data['starttime'] = '';
+            $data['endtime'] = '';
+            // $data['should_endtime'] = time()+(3600*2) + (60*3);
+            // if($space_machine['machine_code'] == '10031'){
+            $data['should_endtime'] = time()+$order_time + (60*3);
+            $data['reserve_endtime'] = time()+$order_time;
+            // if($subject_type == 'subject3'){
+            //     $data['subject_type'] = 'subject3';
+            // }else{
+            //     $data['subject_type'] = 'subject2';
+            // }
+            // }
+
+            $data['order_status'] = $order_status;
+            $data['ordertype'] = 2;
+            $data['car_type'] = $space_machine['car_type'];
+            $data['car_type_text'] = $space_machine['car_type_text'];
+            $data['coachlist'] = $coachlist;
+            $data['ordernumber'] = '';
+            
+            $this->success('返回成功',$data);
+        }
+    }
+
+    public function finish_today_order($stu_id,$today_start,$today_end,$student_type)
+    {
+        $where['starttime'] = ['between',[$today_start,$today_end]];
+        $where['order_status'] = 'executing';
+        $where['stu_id'] = $stu_id;
+        $where['endtime'] = ['<',time()];
+        if($student_type == 'studednt'){
+            $order = $this->order->where($where)->select();
+            if($order){
+                $update['order_status']= 'finished';
+                $this->order->where($where)->update($update);
+            }
+        }else{
+            $order = $this->temporaryorder->where($where)->select();
+            if($order){
+                $update['order_status']= 'finished';
+                $this->temporaryorder->where($where)->update($update);
+            }
+        }
+    }
+
+    public function machine_validate($stu_id,$space_machine){
+        $student = $this->student->where('stu_id',$stu_id)->find();
+        if($student['car_type'] != $space_machine['car_type']){
+            $this->error('您当前车型为'.$student['car_type_text'].'当前机器为'.$space_machine['car_type_text'].'请选择车型机器上机');
+        }
+    }
+
+    
+    public function reserve_order($stu_id,$today_start,$today_end,$machine_id,$space_id,$type,$coachlist,$order_time){
+        $where['order_status'] = 'paid';
+        $where['stu_id'] = $stu_id;
+        $where['student_boot_type'] = 0;
+        $where['space_id'] = $space_id;
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+        $order = $this->order->where($where)->find();
+        if($order){
+            if($type ==2){
+                $this->error('已有预约，请转到学员登录');
+            }
+            $data['space_name'] = $this->space->where('id',$order['space_id'])->find()['space_name'];
+            $data['space_id'] = $space_id;
+            $data['machine_code'] = $this->machinecar->where('id',$machine_id)->find()['machine_code'];
+            $data['reserve_starttime'] = $order['reserve_starttime'];
+            $data['reserve_endtime'] = $order['reserve_endtime'];
+            $data['coach_id'] = $order['coach_id'];
+            $data['coach_name'] = $this->coach->where('coach_id',$order['coach_id'])->find()['name'];
+            $data['subject_type'] = $order['subject_type_text'];
+            $data['car_type'] = $order['car_type_text'];
+            $data['starttime'] = NULL;
+            $data['endtime'] = NULL;
+            // $data['should_endtime'] = time()+3600*2 + 180;
+            // if($data['machine_code']== '10031'){
+                $data['should_endtime'] = time()+$order_time + 180;
+            // }
+            $data['ordertype'] = 1;
+            $data['ordernumber'] = $order['ordernumber'];
+            $this->success('返回成功',$data);
+        }
+    }
+
+    public function machine_confirm($machine_id){
+        $machinecar = $this->machinecar->where('machine_id',$machine_id)->find();
+        if(!$machinecar){
+            $this->error('机器码错误，请上传正确机器码');
+        }
+        return $machinecar['space_id'];
+    }
+
+
+    
+
+    public function coach_boot($stu_id,$today_start,$today_end,$machine_id,$student_type){
+        $where['order_status'] = ['neq','cancel_refunded'];
+        $where['stu_id'] = $stu_id;
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+        $where['should_endtime'] = ['>',time()];
+        $where['machine_id'] = $machine_id;
+        if($student_type == 'student'){
+            $order = $this->order->where($where)->find();
+        }else{
+            $order = $this->temporaryorder->where($where)->find();
+        }
+        if($order){
+            $this->put_info($order,$student_type);
+            $this->success('当前订单您已授权。','',2);
+        }
+    }
+    
+    public function put_info($order,$student_type){
+        $data['ordernumber'] = $order['ordernumber'];
+        $student = $this->student->where('stu_id',$order['stu_id'])->find();
+        $machinecar = $this->machinecar->where('id',$order['machine_id'])->find();
+        $data['sim'] = $machinecar['sim'];
+        $data['address'] = $machinecar['address'];
+        $data['imei'] = $machinecar['imei'];
+        $data['sn'] = $machinecar['sn'];
+        $data['terminal_equipment'] = $machinecar['terminal_equipment'];
+        $data['study_machine'] = $machinecar['study_machine'];
+        $data['idcard']= $student['idcard'];
+        $data['stu_id'] = $student['stu_id'];
+        $data['stu_name'] = $student['name'];
+        $data['phone'] =  $student['phone'];
+        $data['subject_type'] = $order['subject_type_text'];
+        // $data['subject_cartype'] = $order['car_type_text'];
+        $data['student_type'] = $student_type;
+        Cache::set('machine_'.$machinecar['machine_code'],$data,5*60);
+    }
+
+    public function not_coming_order($stu_id,$today_start,$today_end,$student_type){
+        if($student_type == 'student'){
+            //开机的结束
+            $where_finish['stu_id'] = $stu_id;
+            $where_finish['reserve_starttime'] = ['<',$today_start];
+            $where_finish['order_status'] = ['in',['accept_unexecut','executing']];
+            $update_finish['order_status'] = 'finished';
+            $this->order->where($where_finish)->update($update_finish);
+
+            //没开机的取消
+            $where_cancel['stu_id'] = $stu_id;
+            $where_finish['reserve_starttime'] = ['<',$today_start];
+            $where_finish['order_status'] = 'paid';
+            $update_cancel['order_status'] = 'cancel_refunded';
+            $this->order->where($where_finish)->update($update_finish);
+        }else{
+            $where_finish['stu_id'] = $stu_id;
+            $where_finish['reserve_starttime'] = ['<',$today_start];
+            $where_finish['order_status'] = ['in',['accept_unexecut','executing']];
+            $update_finish['order_status'] = 'finished';
+            $this->temporaryorder->where($where_finish)->update($update_finish);
+            //没开机的取消
+            $where_cancel['stu_id'] = $stu_id;
+            $where_finish['reserve_starttime'] = ['<',$today_start];
+            $where_finish['order_status'] = 'paid';
+            $update_cancel['order_status'] = 'cancel_refunded';
+            $this->temporaryorder->where($where_finish)->update($update_finish);
+        }
+    }
+
+    public function unusual_order($stu_id,$space_machine,$today_start,$today_end,$student_type)
+    {
+        $where['order_status'] = ['in',['unpaid','paid','accept_unexecut','executing']];
+        $where['stu_id'] = $stu_id;
+        $where['space_id'] = ['neq',$space_machine['space_id']];
+        $where['reserve_starttime'] = ['between',[$today_start,$today_end]];
+        if($student_type == 'student'){
+            $order = $this->order->where($where)->select();
+            foreach($order as $v){
+                if($v['order_status'] == 'executing'){
+                    $update['order_status'] = 'finished';
+                    $where_order['id'] = $v['id'];
+                    $this->order->where($where_order)->update($update);
+                }else{
+                    $update['order_status'] = 'cancel_refunded';
+                    $where_order['id'] = $v['id'];
+                    $this->order->where($where_order)->update($update);
+                }
+            }
+        }else{
+            $order = $this->temporaryorder->where($where)->select();
+            foreach($order as $v){
+                if($v['order_status'] == 'executing'){
+                    $update['order_status'] = 'finished';
+                    $where_order['id'] = $v['id'];
+                    $this->temporaryorder->where($where_order)->update($update);
+                }else{
+                    $update['order_status'] = 'cancel_refunded';
+                    $where_order['id'] = $v['id'];
+                    $this->temporaryorder->where($where_order)->update($update);
+                }
+            }
+        }
+    }
+
+    public function submitorder(){
+        $params = $this->request->post();
+        // $params['machine_code'] = '10020';
+        // $params['stu_id'] = 'CSN20210409102726705658';
+        // $params['student_type'] = 'intent_student';
+        // $params['ordernumber'] = '';
+        // $params['reserve_starttime'] = time();
+        // $params['reserve_endtime'] = time()+3600;
+        // $params['should_endtime'] = time()+3600;
+        // $params['coach_id'] = 'CTN20210311103714746874';
+        // $params['order_status'] = 'paid';
+        // $params['ordertype'] = 2;
+        // $params['car_type'] = 'cartype1';
+        // $params['subject_type'] = 'subject2';
+        if(empty($params['stu_id'])|| empty($params['student_type']) ||empty($params['reserve_starttime'])||empty($params['reserve_endtime'])|| empty($params['machine_code']) ||
+         empty($params['order_status']) || empty($params['ordertype']) || empty($params['coach_id']) || empty($params['car_type']) 
+         || empty($params['subject_type']) || empty($params['should_endtime']) ){
+            $this->error('参数缺失');
+        }
+        // var_dump($params);exit;
+        $student_type = $params['student_type'];
+        $this->time_valatite($params['reserve_starttime'],$params['reserve_endtime']);
+        $stu_id = $params['stu_id'];
+        $machine = $this->machinecar->with(['space'])->where('machinecar.machine_code',$params['machine_code'])->find();
+        $machine_id = $machine['id'];
+        $space_id = $machine['space_id'];
+        $whereorder['order_status'] = ['in',['paid','accept_unexecut','executing']];
+        $whereorder['stu_id'] = $stu_id ;
+        $whereorder['ordertype'] = 2;
+        if($student_type == 'student'){
+            // $order_exist= $this->order->where($whereorder)->count();
+            $student = $this->student->with(['space'])->where('stu_id',$stu_id)->find();
+            // $this->space_validate($stu_id,$machine['space']);
+        }else{
+            // $order_exist= $this->temporaryorder->where($whereorder)->count();
+            $student = $this->intentstudent->where('stu_id',$stu_id)->find();
+        }
+        // if($order_exist){
+        //     $this->error('已有未完成订单');
+        // }
+        //提交不能太频繁
+        $submit_stu_id = Cache::get('submit_id'.$stu_id);
+        if($submit_stu_id){
+            $this->error('请不要频繁提交操作');
+        }
+
+        if(!empty($params['ordernumber'])){
+            $update['machine_id'] =  $machine_id;
+            $should_endtime = $this->order->where('ordernumber',$params['ordernumber'])->find();
+            if($should_endtime['student_boot_type'] == 1){
+                $this->success('学员已授权');
+            }
+            if($should_endtime['should_endtime'] == NULL){
+                $update['starttime'] =  NULL;
+                $update['should_endtime'] = time()+2*60*60;
+            }
+            $update['car_type'] = $params['car_type'];
+            $update['subject_type'] = $params['subject_type'];
+            $update['student_boot_type'] = 1;
+            $update['coach_id'] = $params['coach_id'];
+
+            if($student['subject_type'] == 'subject3'){
+                $update['subject_type'] = 'subject3';
+            }else{
+                $update['subject_type'] = 'subject2';
+            }
+
+            // $update['updatetime'] = time();
+            $this->order->where('ordernumber',$params['ordernumber'])->update($update);
+            $res = 1;
+            $data['ordernumber'] = $params['ordernumber'];
+            $data['subject_type'] = __($params['subject_type']);
+            // $data['subject_cartype'] = __($params['car_type']);
+        }else{
+            $order['cooperation_id'] = $machine['cooperation_id'];
+            $order['ordernumber'] = 'CON'.date("YmdHis") . mt_rand(100000, 999999);
+            $order['stu_id'] = $params['stu_id'];
+            $order['machine_id'] = $machine_id;
+            $order['ordertype'] = $params['ordertype'];
+            $order['space_id'] = $space_id;
+            $order['reserve_starttime'] = $params['reserve_starttime'];
+            $order['reserve_endtime'] = $params['reserve_endtime'];
+            $order['starttime'] = NULL;
+            $order['endtime'] = NULL;
+            $order['should_endtime'] = $params['should_endtime'];
+            $order['order_status'] = $params['order_status'];
+            $order['coach_id'] = $params['coach_id'];
+            $order['car_type'] = $params['car_type'];
+            $order['subject_type'] = $params['subject_type'];
+            $order['student_boot_type'] = 1;
+            $order['payModel'] = 2;
+            $order['evaluation'] = 0;
+            if($student['subject_type'] == 'subject3'){
+                $order['subject_type'] = 'subject3';
+            }else{
+                $order['subject_type'] = 'subject2';
+            }
+            if($student_type == 'student'){
+                $res = $this->order->save($order);
+                //学员下单扣学时
+                $this->common->stu_period_surplus($student);
+                $data['idcard']= $student['idcard'];
+            }else{
+                $res = $this->temporaryorder->save($order);
+                $data['idcard']= '';
+            }
+            $data['ordernumber'] = $order['ordernumber'];
+            $data['subject_type'] = __($order['subject_type']);
+            // $data['subject_cartype'] = __($order['car_type']);
+        }
+        if($res){
+            $data['sim'] = $machine['sim'];
+            $data['address'] = $machine['address'];
+            $data['imei'] = $machine['imei'];
+            $data['sn'] = $machine['sn']; 
+            $data['terminal_equipment'] = $machine['terminal_equipment'];
+            $data['study_machine'] = $machine['study_machine'];
+            $data['stu_id'] = $student['stu_id'];
+            $data['stu_name'] =  $student['name'];
+            $data['phone'] =  $student['phone'];
+            $data['student_type'] =  $params['student_type'];
+            Cache::set('submit_id'.$stu_id,$stu_id,3);
+            Cache::set('machine_'.$params['machine_code'],$data,5*60);
+            $this->success('返回成功');
+        }else{
+            $this->error('提交失败，请重新提交');
+        }
+    }
+
+    
+    
+    
+
+}

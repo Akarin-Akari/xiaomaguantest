@@ -1,0 +1,99 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Cooperation_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-cooperation_id" data-rule="required" data-source="cooperation/index" class="form-control selectpage" name="row[cooperation_id]" type="text" value="{$row.cooperation_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Space_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-space_id" data-rule="required" data-source="space/index" class="form-control selectpage" name="row[space_id]" type="text" value="{$row.space_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Stu_id')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-stu_id" data-rule="required" data-source="stu/index" class="form-control selectpage" name="row[stu_id]" type="text" value="{$row.stu_id|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_hege')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-keer_hege" class="form-control" name="row[keer_hege]" type="text" value="{$row.keer_hege|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_hege_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="keerHegeStatusList" item="vo"}
+            <label for="row[keer_hege_status]-{$key}"><input id="row[keer_hege_status]-{$key}" name="row[keer_hege_status]" type="radio" value="{$key}" {in name="key" value="$row.keer_hege_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_hege')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-kesan_hege" class="form-control" name="row[kesan_hege]" type="text" value="{$row.kesan_hege|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_hege_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="kesanHegeStatusList" item="vo"}
+            <label for="row[kesan_hege_status]-{$key}"><input id="row[kesan_hege_status]-{$key}" name="row[kesan_hege_status]" type="radio" value="{$key}" {in name="key" value="$row.kesan_hege_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_leiji')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-keer_leiji" class="form-control" name="row[keer_leiji]" type="text" value="{$row.keer_leiji|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Keer_leiji_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="keerLeijiStatusList" item="vo"}
+            <label for="row[keer_leiji_status]-{$key}"><input id="row[keer_leiji_status]-{$key}" name="row[keer_leiji_status]" type="radio" value="{$key}" {in name="key" value="$row.keer_leiji_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_leiji')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-kesan_leiji" class="form-control" name="row[kesan_leiji]" type="text" value="{$row.kesan_leiji|htmlentities}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Kesan_leiji_status')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            
+            <div class="radio">
+            {foreach name="kesanLeijiStatusList" item="vo"}
+            <label for="row[kesan_leiji_status]-{$key}"><input id="row[kesan_leiji_status]-{$key}" name="row[kesan_leiji_status]" type="radio" value="{$key}" {in name="key" value="$row.kesan_leiji_status"}checked{/in} /> {$vo}</label> 
+            {/foreach}
+            </div>
+
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-primary btn-embossed disabled">{:__('OK')}</button>
+        </div>
+    </div>
+</form>
